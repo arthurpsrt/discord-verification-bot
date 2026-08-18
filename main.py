@@ -21,9 +21,9 @@ ROLE_MENU = {
 # ⬇️ Écris ton texte ici — une ligne par paire de guillemets, \n = retour à la ligne
 ACCGEN_TITLE = "🎫 Service disponible !"
 ACCGEN_TEXT = (
-    "Ta première ligne ici\n"
-    "Ta deuxième ligne\n"
-    "Ta troisième ligne\n\n"
+    "**On peut vous générer des comptes Ticketmaster**"
+    "Ticketmaster FR 🇫🇷\n"
+    "TTicketmaster US 🇺🇸\n\n"
     "➡️ Ouvre un ticket ci-dessous pour plus d'infos."
 )
 ACCGEN_COLOR = discord.Color.green()   # ou .blue() .red() .gold() .purple()
