@@ -255,3 +255,33 @@ if TOKEN:
     bot.run(TOKEN)
 else:
     print("❌ ERREUR : DISCORD_TOKEN introuvable dans les variables d'environnement.")
+
+
+
+# ============ EMBED ACC-GEN ============
+# ⬇️ Écris ton texte ici ⬇️
+ACCGEN_TITLE = "🎫 Service disponible !"
+ACCGEN_TEXT = (
+    "On peut vous générer des comptes Ticketmaster"
+    "Ticketmaster FR 🇫🇷"
+    "Ticketmaster US 🇺🇸"
+    "➡️ Ouvre un ticket ci-dessous pour plus d'infos."
+)
+ACCGEN_COLOR = discord.Color.green()   # ou .blue() .red() .gold() .purple()
+# =======================================
+
+
+@bot.command(name="setup_accgen")
+@commands.has_permissions(administrator=True)
+async def setup_accgen(ctx):
+    """Poste l'embed du service dans le salon actuel."""
+    try:
+        embed = discord.Embed(
+            title=ACCGEN_TITLE,
+            description=ACCGEN_TEXT,
+            color=ACCGEN_COLOR
+        )
+        await ctx.send(embed=embed)
+        await ctx.message.delete()
+    except Exception as e:
+        await ctx.send(f"❌ Erreur : {e}")
