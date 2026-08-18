@@ -21,7 +21,7 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 def create_rules_embed():
     embed = discord.Embed(
         title=RULES_TITLE,
-        description="Bienvenue sur le serveur ! Avant d'accéder aux autres salons, tu dois accepter les règles.",
+        description="Bienvenue sur RICHNESS ! Avant d'accéder aux autres salons, tu dois accepter les règles.",
         color=discord.Color.blue()
     )
     embed.add_field(
@@ -36,15 +36,14 @@ def create_rules_embed():
     )
     embed.add_field(
         name="3️⃣ Publicité interdite",
-        value="Pas de publicité pour d'autres serveurs ou produits sans permission.",
+        value="Pas de publicité pour d'autres serveurs de tickets",
         inline=False
     )
     embed.add_field(
-        name="✅ Pour continuer",
         value=f"Clique sur {VERIFICATION_EMOJI} ci-dessous pour accepter les règles et accéder au serveur.",
         inline=False
     )
-    embed.set_footer(text="Merci de respecter ces règles !")
+    embed.set_footer(text="Merci de respecter ces règles les brothers !")
     return embed
 
 
