@@ -17,6 +17,17 @@ ROLE_MENU = {
     "📦": "GEN ACC",
 }
 
+# ---- EMBED ACC-GEN ----
+# ⬇️ Écris ton texte ici — une ligne par paire de guillemets, \n = retour à la ligne
+ACCGEN_TITLE = "🎫 Service disponible !"
+ACCGEN_TEXT = (
+    "Ta première ligne ici\n"
+    "Ta deuxième ligne\n"
+    "Ta troisième ligne\n\n"
+    "➡️ Ouvre un ticket ci-dessous pour plus d'infos."
+)
+ACCGEN_COLOR = discord.Color.green()   # ou .blue() .red() .gold() .purple()
+
 # Titres qui servent de "signature" aux messages du bot (ne pas modifier à la légère)
 RULES_TITLE = "📋 Règles du Serveur"
 WELCOME_TITLE = "🎯 Choisis ton rôle"
@@ -94,6 +105,14 @@ def create_roles_embed():
     return embed
 
 
+def create_accgen_embed():
+    return discord.Embed(
+        title=ACCGEN_TITLE,
+        description=ACCGEN_TEXT,
+        color=ACCGEN_COLOR
+    )
+
+
 # ---------- COMMANDES ----------
 
 @bot.event
@@ -136,6 +155,17 @@ async def setup_roles(ctx):
         message = await ctx.send(embed=create_roles_embed())
         for emoji in ROLE_MENU:
             await message.add_reaction(emoji)
+        await ctx.message.delete()
+    except Exception as e:
+        await ctx.send(f"❌ Erreur : {e}")
+
+
+@bot.command(name="setup_accgen")
+@commands.has_permissions(administrator=True)
+async def setup_accgen(ctx):
+    """Poste l'embed du service dans le salon actuel."""
+    try:
+        await ctx.send(embed=create_accgen_embed())
         await ctx.message.delete()
     except Exception as e:
         await ctx.send(f"❌ Erreur : {e}")
@@ -196,10 +226,6 @@ async def on_raw_reaction_add(payload):
             role = await _get_or_create_role(guild, MEMBER_ROLE_NAME, discord.Color.green())
             await member.add_roles(role, reason="A accepté les règles")
             print(f"✅ {member} → {MEMBER_ROLE_NAME}")
-            try:
-                await member.send("✅ Bienvenue ! Tu as accepté les règles, tu as maintenant accès au serveur.")
-            except discord.Forbidden:
-                pass
 
         elif menu == 'roles':
             role_name = ROLE_LOOKUP.get(emoji)
@@ -255,33 +281,3 @@ if TOKEN:
     bot.run(TOKEN)
 else:
     print("❌ ERREUR : DISCORD_TOKEN introuvable dans les variables d'environnement.")
-
-
-
-# ============ EMBED ACC-GEN ============
-# ⬇️ Écris ton texte ici ⬇️
-ACCGEN_TITLE = "🎫 Service disponible !"
-ACCGEN_TEXT = (
-    "On peut vous générer des comptes Ticketmaster"
-    "Ticketmaster FR 🇫🇷"
-    "Ticketmaster US 🇺🇸"
-    "➡️ Ouvre un ticket ci-dessous pour plus d'infos."
-)
-ACCGEN_COLOR = discord.Color.green()   # ou .blue() .red() .gold() .purple()
-# =======================================
-
-
-@bot.command(name="setup_accgen")
-@commands.has_permissions(administrator=True)
-async def setup_accgen(ctx):
-    """Poste l'embed du service dans le salon actuel."""
-    try:
-        embed = discord.Embed(
-            title=ACCGEN_TITLE,
-            description=ACCGEN_TEXT,
-            color=ACCGEN_COLOR
-        )
-        await ctx.send(embed=embed)
-        await ctx.message.delete()
-    except Exception as e:
-        await ctx.send(f"❌ Erreur : {e}")
