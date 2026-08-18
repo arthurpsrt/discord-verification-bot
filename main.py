@@ -35,18 +35,8 @@ def create_rules_embed():
         inline=False
     )
     embed.add_field(
-        name="3️⃣ Contenu interdit",
-        value="Aucun contenu illégal, NSFW ou dangereux.",
-        inline=False
-    )
-    embed.add_field(
-        name="4️⃣ Publicité interdite",
+        name="3️⃣ Publicité interdite",
         value="Pas de publicité pour d'autres serveurs ou produits sans permission.",
-        inline=False
-    )
-    embed.add_field(
-        name="5️⃣ Modération",
-        value="Respecte les décisions des modérateurs et administrateurs.",
         inline=False
     )
     embed.add_field(
