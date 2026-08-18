@@ -22,8 +22,8 @@ ROLE_MENU = {
 ACCGEN_TITLE = "🎫 Service disponible !"
 ACCGEN_TEXT = (
     "**Génération de comptes Ticketmaster**\n"
-    "Ticketmaster FR 🇫🇷\n\n"
-    "TTicketmaster US 🇺🇸\n\n\n"
+    "Ticketmaster FR 🇫🇷\n"
+    "Ticketmaster US 🇺🇸\n\n"
     "➡️ Ouvre un ticket ci-dessous pour plus d'infos."
 )
 ACCGEN_COLOR = discord.Color.green()   # ou .blue() .red() .gold() .purple()
