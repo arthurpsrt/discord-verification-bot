@@ -22,6 +22,7 @@ ROLE_MENU = {
 ACCGEN_TITLE = "🎫 Service disponible !"
 ACCGEN_TEXT = (
     "**On peut vous générer des comptes Ticketmaster**"
+    
     "Ticketmaster FR 🇫🇷\n"
     "TTicketmaster US 🇺🇸\n\n"
     "➡️ Ouvre un ticket ci-dessous pour plus d'infos."
