@@ -21,7 +21,7 @@ ROLE_MENU = {
 # ⬇️ Écris ton texte ici — une ligne par paire de guillemets, \n = retour à la ligne
 ACCGEN_TITLE = "🎫 Service disponible !"
 ACCGEN_TEXT = (
-    "**On peut vous générer des comptes Ticketmaster**"
+    "**Génération de comptes Ticketmaster**"
     
     "Ticketmaster FR 🇫🇷\n"
     "TTicketmaster US 🇺🇸\n\n"
