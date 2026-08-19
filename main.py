@@ -35,8 +35,8 @@ ACCGEN_PSG_COLOR = discord.Color.red()   # ou .blue() .green() .gold() .purple()
 # ⬇️ Écris ton texte ici
 EXTENSION_TITLE = "🧩 Extension Chrome"
 EXTENSION_TEXT = (
-    "**Voici l'extension à télécharger pour pouvoir recupérer les paniers**\n"
-    "**Installation :**\n"
+    "**Voici l'extension à télécharger pour pouvoir recupérer les paniers**\n\n"
+    "**Installation :**\n\n"
     "1. Télécharge le fichier ci-dessous et dézippe-le\n"
     "2. Ouvre `chrome://extensions` dans Chrome\n"
     "3. Active le **Mode développeur** en haut à droite\n"
