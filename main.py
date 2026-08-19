@@ -2,21 +2,17 @@ import discord
 from discord.ext import commands
 import os
 from dotenv import load_dotenv
-
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-
 # ============ CONFIGURATION ============
 MEMBER_ROLE_NAME = "MEMBER"
 VERIFICATION_EMOJI = "✅"
-
 # Menu des rôles : emoji -> nom du rôle
 ROLE_MENU = {
     "🛒": "CART",
     "🎫": "SIGN UP",
     "📦": "GEN ACC",
 }
-
 # ---- EMBED ACC-GEN ----
 # ⬇️ Écris ton texte ici — une ligne par paire de guillemets, \n = retour à la ligne
 ACCGEN_TITLE = "🎫 Service disponible !"
@@ -27,29 +23,28 @@ ACCGEN_TEXT = (
     "➡️ Ouvre un ticket ci-dessous pour plus d'infos."
 )
 ACCGEN_COLOR = discord.Color.green()   # ou .blue() .red() .gold() .purple()
-
+# ---- EMBED ACC-GEN PSG ----
+# ⬇️ Écris ton texte ici
+ACCGEN_PSG_TITLE = "🔴🔵 Service disponible !"
+ACCGEN_PSG_TEXT = (
+    "**Génération de compte RB**\n"
+    "➡️ Ouvre un ticket ci-dessous pour plus d'infos."
+)
+ACCGEN_PSG_COLOR = discord.Color.red()   # ou .blue() .green() .gold() .purple()
 # Titres qui servent de "signature" aux messages du bot (ne pas modifier à la légère)
 RULES_TITLE = "📋 Règles du Serveur"
 WELCOME_TITLE = "🎯 Choisis ton rôle"
 ROLES_TITLE = "🎭 Sélection des rôles"
 # =======================================
-
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 bot = commands.Bot(command_prefix='!', intents=intents)
-
-
 def _norm(emoji: str) -> str:
     """Retire le sélecteur de variation pour comparer les emojis de façon fiable."""
     return emoji.replace("️", "")
-
-
 ROLE_LOOKUP = {_norm(e): r for e, r in ROLE_MENU.items()}
-
-
 # ---------- EMBEDS ----------
-
 def create_rules_embed():
     embed = discord.Embed(
         title=RULES_TITLE,
@@ -78,8 +73,6 @@ def create_rules_embed():
     )
     embed.set_footer(text="Merci de respecter ces règles les Brothers !")
     return embed
-
-
 def create_welcome_embed(roles_channel):
     embed = discord.Embed(
         title=WELCOME_TITLE,
@@ -92,8 +85,6 @@ def create_welcome_embed(roles_channel):
     )
     embed.set_footer(text="Un clic sur un emoji suffit !")
     return embed
-
-
 def create_roles_embed():
     lignes = "\n".join(f"{emoji} — **{role}**" for emoji, role in ROLE_MENU.items())
     embed = discord.Embed(
@@ -103,23 +94,22 @@ def create_roles_embed():
     )
     embed.set_footer(text="Clique sur un emoji pour obtenir le rôle • Reclique pour le retirer")
     return embed
-
-
 def create_accgen_embed():
     return discord.Embed(
         title=ACCGEN_TITLE,
         description=ACCGEN_TEXT,
         color=ACCGEN_COLOR
     )
-
-
+def create_accgen_psg_embed():
+    return discord.Embed(
+        title=ACCGEN_PSG_TITLE,
+        description=ACCGEN_PSG_TEXT,
+        color=ACCGEN_PSG_COLOR
+    )
 # ---------- COMMANDES ----------
-
 @bot.event
 async def on_ready():
     print(f'✅ Bot connecté en tant que {bot.user}')
-
-
 @bot.command(name="setup_rules")
 @commands.has_permissions(administrator=True)
 async def setup_rules(ctx):
@@ -130,8 +120,6 @@ async def setup_rules(ctx):
         await ctx.message.delete()
     except Exception as e:
         await ctx.send(f"❌ Erreur : {e}")
-
-
 @bot.command(name="setup_welcome")
 @commands.has_permissions(administrator=True)
 async def setup_welcome(ctx, salon: discord.TextChannel = None):
@@ -145,8 +133,6 @@ async def setup_welcome(ctx, salon: discord.TextChannel = None):
         await ctx.message.delete()
     except Exception as e:
         await ctx.send(f"❌ Erreur : {e}")
-
-
 @bot.command(name="setup_roles")
 @commands.has_permissions(administrator=True)
 async def setup_roles(ctx):
@@ -158,8 +144,6 @@ async def setup_roles(ctx):
         await ctx.message.delete()
     except Exception as e:
         await ctx.send(f"❌ Erreur : {e}")
-
-
 @bot.command(name="setup_accgen")
 @commands.has_permissions(administrator=True)
 async def setup_accgen(ctx):
@@ -169,10 +153,16 @@ async def setup_accgen(ctx):
         await ctx.message.delete()
     except Exception as e:
         await ctx.send(f"❌ Erreur : {e}")
-
-
+@bot.command(name="setup_accgenpsg")
+@commands.has_permissions(administrator=True)
+async def setup_accgenpsg(ctx):
+    """Poste l'embed PSG dans le salon actuel."""
+    try:
+        await ctx.send(embed=create_accgen_psg_embed())
+        await ctx.message.delete()
+    except Exception as e:
+        await ctx.send(f"❌ Erreur : {e}")
 # ---------- LOGIQUE DES RÉACTIONS ----------
-
 async def _identify_menu(payload):
     """Retourne 'rules', 'roles' ou None selon le message réagi.
     Aucun ID stocké en mémoire : ça survit aux redémarrages du bot."""
@@ -193,32 +183,24 @@ async def _identify_menu(payload):
     if title == ROLES_TITLE:
         return 'roles'
     return None
-
-
 async def _get_or_create_role(guild, name, color=discord.Color.default()):
     role = discord.utils.get(guild.roles, name=name)
     if role is None:
         role = await guild.create_role(name=name, color=color)
         print(f"✅ Rôle « {name} » créé")
     return role
-
-
 @bot.event
 async def on_raw_reaction_add(payload):
     if payload.user_id == bot.user.id:
         return
-
     menu = await _identify_menu(payload)
     if menu is None:
         return
-
     guild = bot.get_guild(payload.guild_id)
     member = payload.member or guild.get_member(payload.user_id)
     if member is None or member.bot:
         return
-
     emoji = _norm(str(payload.emoji))
-
     try:
         if menu == 'rules':
             if emoji != _norm(VERIFICATION_EMOJI):
@@ -226,7 +208,6 @@ async def on_raw_reaction_add(payload):
             role = await _get_or_create_role(guild, MEMBER_ROLE_NAME, discord.Color.green())
             await member.add_roles(role, reason="A accepté les règles")
             print(f"✅ {member} → {MEMBER_ROLE_NAME}")
-
         elif menu == 'roles':
             role_name = ROLE_LOOKUP.get(emoji)
             if role_name is None:
@@ -234,29 +215,22 @@ async def on_raw_reaction_add(payload):
             role = await _get_or_create_role(guild, role_name)
             await member.add_roles(role, reason="Sélection de rôle")
             print(f"✅ {member} → {role_name}")
-
     except discord.Forbidden:
         print("❌ Permissions insuffisantes : le rôle du bot doit être AU-DESSUS des rôles qu'il attribue.")
     except Exception as e:
         print(f"❌ Erreur ajout de rôle : {e}")
-
-
 @bot.event
 async def on_raw_reaction_remove(payload):
     if payload.user_id == bot.user.id:
         return
-
     menu = await _identify_menu(payload)
     if menu is None:
         return
-
     guild = bot.get_guild(payload.guild_id)
     member = guild.get_member(payload.user_id)
     if member is None or member.bot:
         return
-
     emoji = _norm(str(payload.emoji))
-
     if menu == 'rules':
         if emoji != _norm(VERIFICATION_EMOJI):
             return
@@ -265,7 +239,6 @@ async def on_raw_reaction_remove(payload):
         role_name = ROLE_LOOKUP.get(emoji)
         if role_name is None:
             return
-
     try:
         role = discord.utils.get(guild.roles, name=role_name)
         if role and role in member.roles:
@@ -275,8 +248,6 @@ async def on_raw_reaction_remove(payload):
         print("❌ Permissions insuffisantes pour retirer le rôle.")
     except Exception as e:
         print(f"❌ Erreur retrait de rôle : {e}")
-
-
 if TOKEN:
     bot.run(TOKEN)
 else:
