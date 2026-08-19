@@ -31,6 +31,20 @@ ACCGEN_PSG_TEXT = (
     "➡️ Ouvre un ticket ci-dessous pour plus d'infos."
 )
 ACCGEN_PSG_COLOR = discord.Color.red()   # ou .blue() .green() .gold() .purple()
+# ---- EMBED EXTENSION ----
+# ⬇️ Écris ton texte ici
+EXTENSION_TITLE = "🧩 Extension Chrome"
+EXTENSION_TEXT = (
+    "**Voici l'extension à télécharger pour pouvoir recupérer les paniers**\n"
+    "**Installation :**\n"
+    "1. Télécharge le fichier ci-dessous et dézippe-le\n"
+    "2. Ouvre `chrome://extensions` dans Chrome\n"
+    "3. Active le **Mode développeur** en haut à droite\n"
+    "4. Clique sur **Charger l'extension non empaquetée**\n"
+    "5. Sélectionne le dossier dézippé"
+)
+EXTENSION_COLOR = discord.Color.blurple()
+EXTENSION_FILE = "KalysBotExtension.zip"   # nom exact du fichier à la racine de ton repo
 # Titres qui servent de "signature" aux messages du bot (ne pas modifier à la légère)
 RULES_TITLE = "📋 Règles du Serveur"
 WELCOME_TITLE = "🎯 Choisis ton rôle"
@@ -106,6 +120,12 @@ def create_accgen_psg_embed():
         description=ACCGEN_PSG_TEXT,
         color=ACCGEN_PSG_COLOR
     )
+def create_extension_embed():
+    return discord.Embed(
+        title=EXTENSION_TITLE,
+        description=EXTENSION_TEXT,
+        color=EXTENSION_COLOR
+    )
 # ---------- COMMANDES ----------
 @bot.event
 async def on_ready():
@@ -160,6 +180,17 @@ async def setup_accgenpsg(ctx):
     try:
         await ctx.send(embed=create_accgen_psg_embed())
         await ctx.message.delete()
+    except Exception as e:
+        await ctx.send(f"❌ Erreur : {e}")
+@bot.command(name="setup_extension")
+@commands.has_permissions(administrator=True)
+async def setup_extension(ctx):
+    """Poste l'embed de l'extension + le fichier zip."""
+    try:
+        await ctx.send(embed=create_extension_embed(), file=discord.File(EXTENSION_FILE))
+        await ctx.message.delete()
+    except FileNotFoundError:
+        await ctx.send(f"❌ `{EXTENSION_FILE}` introuvable — vérifie qu'il est bien à la racine du repo.")
     except Exception as e:
         await ctx.send(f"❌ Erreur : {e}")
 # ---------- LOGIQUE DES RÉACTIONS ----------
