@@ -302,10 +302,15 @@ section { position: relative; }
 .form-foot { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; }
 .form-foot p { margin: 0; font-size: 14px; color: var(--mist); max-width: 30ch; }
 
-.done { position: absolute; inset: 0; border-radius: inherit; background: var(--ink); display: flex; flex-direction: column; justify-content: center; gap: 20px; padding: clamp(24px, 4vw, 48px); z-index: 2; }
+.done { position: absolute; inset: 0; border-radius: inherit; background: var(--ink); display: flex; flex-direction: column; justify-content: flex-start; gap: 20px; padding: clamp(32px, 5vw, 64px) clamp(24px, 4vw, 48px); z-index: 2; }
 .done h3 { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: clamp(44px, 5vw, 64px); line-height: .92; margin: 0; }
 .done p { margin: 0; color: var(--mist); max-width: 44ch; }
 .done .row { display: flex; flex-wrap: wrap; gap: 12px; }
+.mail-alt { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; font-size: 14px; color: var(--mist); padding-top: 4px; border-top: 1px solid var(--line); padding-top: 16px; }
+.mail-alt a, .mail-alt button { background: none; border: 0; padding: 0; cursor: pointer; color: var(--pearl); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--line-strong); }
+.mail-alt a:hover, .mail-alt button:hover { color: var(--glow); }
+.mail-alt code { font-family: var(--f-mono); font-size: 13px; color: var(--pearl); user-select: all; overflow-wrap: anywhere; }
+.copy-box { width: 100%; min-height: 120px; background: var(--ink-2); color: var(--pearl); border: 1px solid var(--line-strong); border-radius: 12px; padding: 12px; font: 13px/1.5 var(--f-mono); resize: vertical; }
 .done .back { background: none; border: 0; color: var(--mist); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; align-self: flex-start; padding: 0; font-size: 14px; }
 .check { width: 64px; height: 64px; }
 .check circle, .check path { fill: none; stroke: var(--glow); stroke-width: 2; }
@@ -679,8 +684,15 @@ section { position: relative; }
         <div class="row">
           <a class="btn" id="send-wa" href="https://wa.me/33785739607" target="_blank" rel="noopener">Envoyer sur WhatsApp
             <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-          <a class="btn btn--ghost" id="send-mail" href="mailto:tmkmoments@tmkpsrt.com">Envoyer par email</a>
+          <a class="btn btn--ghost" id="send-gmail" href="https://mail.google.com/mail/?view=cm&amp;to=tmkmoments@tmkpsrt.com" target="_blank" rel="noopener">Envoyer avec Gmail</a>
         </div>
+        <div class="mail-alt">
+          <span>Autre messagerie :</span>
+          <a id="send-mail" href="mailto:tmkmoments@tmkpsrt.com">ouvrir mon application mail</a>
+          <button type="button" id="copy-msg">copier le message</button>
+          <span>puis l'envoyer à <code>tmkmoments@tmkpsrt.com</code></span>
+        </div>
+        <textarea class="copy-box" id="copy-box" readonly hidden aria-label="Message de votre demande"></textarea>
         <button type="button" class="back" id="back">Modifier ma demande</button>
       </div>
     </form>
@@ -986,10 +998,21 @@ section { position: relative; }
     var body = "Bonjour TMK Moments, voici ma demande :\n\n" + rows.map(function (r) { return "• " + r[0] + " : " + String(r[1]).trim(); }).join("\n");
     var subject = "Demande TMK Moments" + ($("#eventName").value ? " · " + $("#eventName").value : "");
     $("#send-wa").href = "https://wa.me/33785739607?text=" + encodeURIComponent(body);
+    $("#send-gmail").href = "https://mail.google.com/mail/?view=cm&to=tmkmoments@tmkpsrt.com&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    $("#copy-box").value = "À : tmkmoments@tmkpsrt.com\nObjet : " + subject + "\n\n" + body;
+    $("#copy-box").hidden = true; $("#copy-msg").textContent = "copier le message";
     $("#send-mail").href = "mailto:tmkmoments@tmkpsrt.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
     done.hidden = false;
     if (window.gsap && !reduce) gsap.fromTo(done, { clipPath: "inset(100% 0 0 0 round 24px)" }, { clipPath: "inset(0% 0 0 0 round 24px)", duration: .9, ease: "expo.out" });
+    form.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
     $("#send-wa").focus({ preventScroll: true });
+  });
+  $("#copy-msg").addEventListener("click", function () {
+    var box = $("#copy-box"), btn = $("#copy-msg");
+    var fallback = function () { box.hidden = false; box.focus(); box.select(); btn.textContent = "sélectionné, faites Ctrl+C / ⌘+C"; };
+    try {
+      navigator.clipboard.writeText(box.value).then(function () { btn.textContent = "message copié ✓"; }, fallback);
+    } catch (e) { fallback(); }
   });
   $("#back").addEventListener("click", function () { done.hidden = true; $("#eventName").focus(); });
 
