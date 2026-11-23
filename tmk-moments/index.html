@@ -556,7 +556,7 @@ section { position: relative; }
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <span class="eyebrow">Saison 2026 – 2027</span>
+        <span class="eyebrow">Prochains rendez-vous · 2026 – 2028</span>
         <h2 class="display h2 reveal">À l'affiche</h2>
       </div>
       <div>
@@ -768,10 +768,14 @@ section { position: relative; }
   /* ---------------- data ---------------- */
   var IMG = "assets/img/";
   var EVENTS = [
-    { cat: "Sport",     name: "Ligue des Champions",     where: "Europe",                 when: "Saison 26 – 27",    g: ["#0d1b4d", "#7aa2ff"] },
-    { cat: "Sport",     name: "Ligue 1",                 where: "Paris, Marseille, Lyon…",when: "Saison 26 – 27",    img: "ligue-1.webp" },
-    { cat: "Sport",     name: "Premier League",          where: "Angleterre",             when: "Saison 26 – 27",    img: "premier-league.webp" },
-    { cat: "Spectacle", name: "Circolo Paris",           where: "Paris",                  when: "2026",              g: ["#4a1424", "#f2a07a"] }
+    { cat: "Sport",   name: "Ligue des Champions",        where: "Europe",                    when: "Saison 26 – 27",   g: ["#0d1b4d", "#7aa2ff"] },
+    { cat: "Sport",   name: "Ligue 1",                    where: "Paris, Marseille, Lyon…",   when: "Saison 26 – 27",   img: "ligue-1.webp" },
+    { cat: "Sport",   name: "Premier League",             where: "Angleterre",                when: "Saison 26 – 27",   img: "premier-league.webp" },
+    { cat: "Sport",   name: "Tournoi des Six Nations",    where: "Stade de France",           when: "Fév. – Mars 2027", g: ["#0b2a5b", "#e8eef9"] },
+    { cat: "Sport",   name: "Ligue des Nations · Bleus",  where: "France · Europe",           when: "Mars – Juin 2027", g: ["#0a1f6b", "#ff5a5f"] },
+    { cat: "Concert", name: "Céline Dion",                where: "Paris La Défense Arena",    when: "Mai 2027",         g: ["#3b1a3f", "#f6d1e0"] },
+    { cat: "Sport",   name: "Roland-Garros",              where: "Paris",                     when: "Mai – Juin 2027",  img: "roland-garros.webp" },
+    { cat: "Sport",   name: "JO Los Angeles 2028",        where: "Los Angeles, États-Unis",   when: "Juillet 2028",     g: ["#1d2d6b", "#ffc46b"] }
   ];
   var TYPE_FOR = { Concert: "t-concert", Sport: "t-sport", Spectacle: "t-spectacle", Festival: "t-festival" };
   function bg(ev) {
@@ -915,10 +919,12 @@ section { position: relative; }
     });
   }
   var PASS = [
-    { name: "Ligue des Champions", place: "Europe", date: "26 – 27" },
-    { name: "Circolo Paris", place: "Paris", date: "2026" },
-    { name: "Ligue 1", place: "Paris", date: "26 – 27" },
-    { name: "Premier League", place: "Londres", date: "26 – 27" }
+    { name: "Céline Dion", place: "Paris", date: "Mai 2027" },
+    { name: "Six Nations", place: "St-Denis", date: "Fév. 2027" },
+    { name: "Roland-Garros", place: "Paris", date: "Juin 2027" },
+    { name: "JO 2028", place: "Los Angeles", date: "Juil. 2028" },
+    { name: "Ligue des Nations", place: "France", date: "2027" },
+    { name: "Ligue des Champions", place: "Europe", date: "26 – 27" }
   ];
   var pi = 0;
   if (!reduce) {
