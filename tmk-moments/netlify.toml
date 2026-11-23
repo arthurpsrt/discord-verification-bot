@@ -1,9 +1,0 @@
-# Netlify: the site is this folder, no build step.
-[build]
-  publish = "."
-  command = ""
-
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
