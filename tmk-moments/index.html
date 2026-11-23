@@ -1,0 +1,1067 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TMK Moments</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="TMK Moments, conciergerie événements : concerts complets, matchs, festivals et expériences VIP. Une demande, un concierge dédié, une réponse sous 24 à 48 h.">
+<meta property="og:title" content="TMK Moments — Conciergerie événements">
+<meta property="og:description" content="Concerts complets, matchs, festivals et expériences VIP. Une demande suffit.">
+<meta property="og:image" content="assets/img/hero-concert.webp">
+<meta name="theme-color" content="#0f0c12">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f0c12'/%3E%3Ctext x='32' y='44' font-family='Arial Black,Arial' font-weight='900' font-size='30' text-anchor='middle' fill='%23f2c7a5'%3ET%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Hanken+Grotesk:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one dark "salle de spectacle" — full-bleed bands, content on a 1240px stage, condensed stadium type as the voice. */
+:root {
+  --ink: #0f0c12;        /* velours de salle */
+  --ink-2: #18131c;      /* surface */
+  --ink-3: #221b27;      /* surface relevée */
+  --pearl: #f1ebe4;      /* texte */
+  --mist: #a59ba8;       /* texte secondaire */
+  --glow: #f2c7a5;       /* lumière de scène */
+  --glow-deep: #d98f6b;
+  --line: rgba(241, 235, 228, .12);
+  --line-strong: rgba(241, 235, 228, .24);
+
+  --f-display: "Big Shoulders Display", "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
+  --f-body: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --stage: 1240px;
+  --gutter: max(20px, 4vw);
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--pearl);
+  font-family: var(--f-body);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--ink); }
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; }
+::selection { background: var(--glow); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--glow); outline-offset: 3px; border-radius: 4px; }
+[hidden] { display: none !important; }
+
+.wrap {
+  width: 100%;
+  max-width: calc(var(--stage) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
+}
+
+/* grain */
+.grain { position: fixed; inset: -50%; z-index: 100; pointer-events: none; opacity: .06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 1.2s steps(6) infinite; }
+@keyframes grain { 0%{transform:translate(0,0)} 20%{transform:translate(-3%,2%)} 40%{transform:translate(2%,-4%)} 60%{transform:translate(-4%,-1%)} 80%{transform:translate(3%,3%)} 100%{transform:translate(0,0)} }
+
+/* type helpers */
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--glow); display: inline-flex; align-items: center; gap: 10px; }
+.eyebrow::before { content: ""; width: 22px; height: 1px; background: currentColor; }
+.display { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; line-height: .9; letter-spacing: .005em; margin: 0; text-wrap: balance; }
+.h2 { font-size: clamp(48px, 8vw, 112px); }
+.lead { color: var(--mist); font-size: clamp(17px, 1.4vw, 19px); max-width: 56ch; margin: 0; }
+
+/* buttons */
+.btn { --bg: var(--glow); --fg: var(--ink);
+  position: relative; display: inline-flex; align-items: center; gap: 12px; height: 56px; padding: 0 26px;
+  border-radius: 999px; border: 0; background: var(--bg); color: var(--fg); cursor: pointer;
+  font-weight: 600; font-size: 15px; letter-spacing: .01em; overflow: hidden; isolation: isolate;
+  transition: transform .5s var(--ease); will-change: transform; }
+.btn::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--pearl); border-radius: inherit;
+  transform: translateY(101%); transition: transform .55s var(--ease); }
+.btn:hover::before { transform: translateY(0); }
+.btn .arr { width: 18px; height: 18px; transition: transform .5s var(--ease); }
+.btn:hover .arr { transform: translateX(4px) rotate(-45deg); }
+.btn--ghost { --bg: transparent; --fg: var(--pearl); box-shadow: inset 0 0 0 1px var(--line-strong); }
+.btn--ghost::before { background: var(--pearl); }
+.btn--ghost:hover { color: var(--ink); }
+.btn--small { height: 44px; padding: 0 18px; font-size: 14px; }
+
+/* ---------- header ---------- */
+.site-head { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; z-index: 50;
+  transition: transform .6s var(--ease), background .4s, border-color .4s; border-bottom: 1px solid transparent; }
+.site-head.is-scrolled { background: rgba(15, 12, 18, .72); backdrop-filter: blur(16px) saturate(1.2); -webkit-backdrop-filter: blur(16px) saturate(1.2); border-color: var(--line); }
+.site-head.is-hidden { transform: translateY(-110%); }
+.head-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 76px; }
+.logo { display: inline-flex; align-items: baseline; gap: 8px; font-family: var(--f-display); font-weight: 900; font-size: 28px; letter-spacing: .02em; text-transform: uppercase; line-height: 1; }
+.logo span { font-family: var(--f-mono); font-weight: 400; font-size: 11px; letter-spacing: .22em; color: var(--glow); }
+.nav { display: flex; align-items: center; gap: 34px; }
+.nav a.link { font-size: 14px; color: var(--mist); position: relative; transition: color .3s; }
+.nav a.link::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 1px; background: var(--glow); transform: scaleX(0); transform-origin: right; transition: transform .5s var(--ease); }
+.nav a.link:hover { color: var(--pearl); }
+.nav a.link:hover::after { transform: scaleX(1); transform-origin: left; }
+.burger { display: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line-strong); background: transparent; cursor: pointer; position: relative; }
+.burger i { position: absolute; left: 13px; right: 13px; height: 1.5px; background: var(--pearl); transition: transform .5s var(--ease), top .5s var(--ease); }
+.burger i:nth-child(1) { top: 17px; } .burger i:nth-child(2) { top: 25px; }
+.menu-open .burger i:nth-child(1) { top: 21px; transform: rotate(45deg); }
+.menu-open .burger i:nth-child(2) { top: 21px; transform: rotate(-45deg); }
+
+.mobile-menu { position: fixed; inset: 0; z-index: 45; background: var(--ink); display: flex; flex-direction: column; justify-content: center;
+  padding: calc(96px + env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px)) calc(40px + env(safe-area-inset-bottom, 0px)) max(24px, env(safe-area-inset-left, 0px));
+  clip-path: inset(0 0 100% 0); transition: clip-path .8s var(--ease); visibility: hidden; }
+.menu-open .mobile-menu { clip-path: inset(0 0 0 0); visibility: visible; }
+.mobile-menu a { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: clamp(48px, 14vw, 84px); line-height: 1; padding-block: 6px; display: block;
+  transform: translateY(40px); opacity: 0; transition: transform .8s var(--ease), opacity .8s var(--ease); }
+.menu-open .mobile-menu a { transform: none; opacity: 1; }
+.menu-open .mobile-menu a:nth-child(2) { transition-delay: .05s; } .menu-open .mobile-menu a:nth-child(3) { transition-delay: .1s; }
+.menu-open .mobile-menu a:nth-child(4) { transition-delay: .15s; } .menu-open .mobile-menu a:nth-child(5) { transition-delay: .2s; }
+.mobile-menu .mm-foot { margin-top: 40px; font-family: var(--f-mono); font-size: 13px; color: var(--mist); display: flex; flex-direction: column; gap: 6px; }
+
+/* ---------- hero ---------- */
+.hero { position: relative; overflow: hidden; padding-top: 140px; padding-bottom: 90px; isolation: isolate; }
+.hero-bg { position: absolute; inset: 0; z-index: -2; }
+.hero-bg img { width: 100%; height: 100%; object-fit: cover; opacity: .38; transform: scale(1.12); filter: saturate(.85) contrast(1.05); }
+.hero-bg::after { content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(15,12,18,.55) 0%, rgba(15,12,18,.35) 40%, var(--ink) 100%),
+              radial-gradient(80% 60% at 20% 40%, transparent 0%, rgba(15,12,18,.7) 100%); }
+.spot { position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(520px circle at var(--mx, 70%) var(--my, 40%), rgba(242,199,165,.16), transparent 60%); transition: background .2s; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 56px; align-items: center; }
+.hero-copy { min-width: 0; display: flex; flex-direction: column; gap: 28px; }
+.hero h1 { font-size: clamp(72px, 13vw, 196px); }
+.hero h1 .line { display: block; overflow: hidden; padding-bottom: .04em; margin-bottom: -.04em; }
+.hero h1 .line > span { display: inline-block; }
+.hero h1 em { font-style: normal; color: var(--glow); }
+.hero h1 .strike { position: relative; display: inline-block; }
+.hero h1 .strike::after { content: ""; position: absolute; left: -2%; right: -2%; top: 52%; height: .07em; background: var(--glow); transform-origin: left; transform: scaleX(var(--strike, 1)); }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 10px 28px; font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--mist); }
+.hero-meta b { color: var(--pearl); font-weight: 500; }
+
+/* VIP pass */
+.pass-stage { perspective: 1200px; display: flex; justify-content: center; min-width: 0; }
+.pass { --rx: 0deg; --ry: 0deg; --px: 50%; --py: 50%;
+  position: relative; width: 100%; max-width: 360px; aspect-ratio: 54 / 86; border-radius: 22px; padding: 26px;
+  background: linear-gradient(160deg, #241c29 0%, #15111a 55%, #1d1520 100%);
+  box-shadow: 0 40px 80px -30px rgba(0,0,0,.8), 0 0 0 1px rgba(241,235,228,.14) inset;
+  transform: rotateX(var(--rx)) rotateY(var(--ry)); transform-style: preserve-3d; transition: transform .25s ease-out;
+  display: flex; flex-direction: column; overflow: hidden; }
+.pass::before { /* holo sheen */
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: color-dodge; opacity: .55;
+  background: radial-gradient(circle at var(--px) var(--py), rgba(242,199,165,.55), transparent 45%),
+              linear-gradient(115deg, transparent 30%, rgba(180,160,255,.18) 45%, rgba(242,199,165,.22) 52%, transparent 65%);
+  background-size: 100% 100%, 250% 250%; background-position: 0 0, var(--px) var(--py); }
+.pass-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.pass-brand { font-family: var(--f-display); font-weight: 900; font-size: 22px; text-transform: uppercase; line-height: .9; }
+.pass-brand small { display: block; font-family: var(--f-mono); font-weight: 400; font-size: 9px; letter-spacing: .26em; color: var(--glow); margin-top: 6px; }
+.pass-chip { width: 38px; height: 28px; border-radius: 6px; background: linear-gradient(135deg, var(--glow), var(--glow-deep)); opacity: .9; position: relative; }
+.pass-chip::after { content: ""; position: absolute; inset: 6px 8px; border: 1px solid rgba(15,12,18,.35); border-radius: 3px; }
+.pass-access { margin-top: auto; font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: 76px; line-height: .82;
+  color: transparent; -webkit-text-stroke: 1px rgba(241,235,228,.35); }
+.pass-access span { color: var(--glow); -webkit-text-stroke: 0; }
+.pass-event { margin-top: 22px; padding-top: 18px; border-top: 1px dashed var(--line-strong); display: grid; gap: 14px; }
+.pass-field { display: grid; gap: 2px; min-width: 0; }
+.pass-field label { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .2em; text-transform: uppercase; color: var(--mist); }
+.pass-field .v { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: 26px; line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pass-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pass-row .v { font-size: 18px; }
+.pass-barcode { margin-top: 18px; height: 34px; opacity: .8;
+  background: repeating-linear-gradient(90deg, var(--pearl) 0 2px, transparent 2px 4px, var(--pearl) 4px 5px, transparent 5px 9px, var(--pearl) 9px 12px, transparent 12px 14px); }
+.pass-notch { position: absolute; left: -12px; right: -12px; top: 64%; display: flex; justify-content: space-between; pointer-events: none; }
+.pass-notch i { width: 24px; height: 24px; border-radius: 50%; background: var(--ink); box-shadow: inset 0 0 0 1px rgba(241,235,228,.14); }
+.swap { display: block; transition: transform .6s var(--ease), opacity .6s var(--ease); }
+.swap.out { transform: translateY(-60%); opacity: 0; }
+.swap.in { transform: translateY(60%); opacity: 0; transition: none; }
+
+/* ---------- marquee ---------- */
+.marquee { border-block: 1px solid var(--line); overflow: hidden; padding-block: 22px; background: var(--ink); }
+.marquee-track { display: flex; width: max-content; animation: marquee 38s linear infinite; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee-item { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: clamp(28px, 3.4vw, 44px); line-height: 1; white-space: nowrap; display: flex; align-items: center; gap: 36px; padding-right: 36px; color: var(--mist); }
+.marquee-item:nth-child(3n+1) { color: var(--pearl); }
+.marquee-item::after { content: ""; width: 10px; height: 10px; background: var(--glow); transform: rotate(45deg); flex: none; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* ---------- sections ---------- */
+section { position: relative; }
+.section { padding-block: clamp(96px, 12vw, 170px); }
+.sec-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px 64px; align-items: end; margin-bottom: clamp(48px, 6vw, 80px); }
+.sec-head > div { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+
+/* services */
+.services { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.service { position: relative; padding: 36px 28px 40px 0; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.service + .service { padding-left: 28px; border-left: 1px solid var(--line); }
+.service::before { content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: var(--glow); transform: scaleX(0); transform-origin: left; transition: transform .8s var(--ease); }
+.service:hover::before { transform: scaleX(1); }
+.service svg { width: 40px; height: 40px; stroke: var(--glow); fill: none; stroke-width: 1.4; transition: transform .8s var(--ease); }
+.service:hover svg { transform: rotate(-8deg) scale(1.08); }
+.service h3 { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: 32px; line-height: .95; margin: 14px 0 0; }
+.service p { margin: 0; color: var(--mist); font-size: 16px; }
+
+/* method */
+.method { background: var(--ink-2); }
+.steps { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+.steps-line { position: absolute; left: 0; right: 0; top: 36px; height: 1px; background: var(--line); }
+.steps-line i { position: absolute; inset: 0; background: linear-gradient(90deg, var(--glow-deep), var(--glow)); transform-origin: left; transform: scaleX(var(--p, 1)); }
+.step { position: relative; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.step-num { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; background: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line-strong);
+  font-family: var(--f-mono); font-size: 14px; color: var(--glow); position: relative; z-index: 1; margin-bottom: 18px; }
+.step h3 { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: clamp(34px, 3.4vw, 46px); line-height: .95; margin: 0; }
+.step p { margin: 0; color: var(--mist); max-width: 34ch; }
+.step .tag { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; color: var(--pearl); text-transform: uppercase; padding: 6px 12px; border: 1px solid var(--line-strong); border-radius: 999px; align-self: flex-start; }
+
+/* events */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { height: 40px; padding: 0 18px; border-radius: 999px; background: transparent; border: 1px solid var(--line-strong); color: var(--mist); cursor: pointer; font-size: 14px; transition: background .3s, color .3s, border-color .3s; display: inline-flex; align-items: center; gap: 8px; }
+.chip sup { font-family: var(--f-mono); font-size: 10px; opacity: .7; }
+.chip:hover { color: var(--pearl); border-color: var(--pearl); }
+.chip[aria-pressed="true"] { background: var(--pearl); color: var(--ink); border-color: var(--pearl); }
+.ev-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.ev { border-bottom: 1px solid var(--line); }
+.ev-btn { width: 100%; background: none; border: 0; cursor: pointer; text-align: left; padding: 26px 0; display: grid; align-items: center; gap: 24px;
+  grid-template-columns: 120px minmax(0, 1fr) 220px 160px 48px; position: relative; isolation: isolate; }
+.ev-btn::before { content: ""; position: absolute; inset: 0 -18px; z-index: -1; background: var(--ink-2); border-radius: 14px; transform: scaleY(.6); opacity: 0; transition: transform .5s var(--ease), opacity .4s; }
+.ev-btn:hover::before, .ev-btn:focus-visible::before { transform: scaleY(1); opacity: 1; }
+.ev-cat { font-family: var(--f-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--glow); }
+.ev-name { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: clamp(32px, 4.2vw, 60px); line-height: .95; transition: transform .6s var(--ease); min-width: 0; overflow-wrap: anywhere; }
+.ev-btn:hover .ev-name { transform: translateX(14px); }
+.ev-where, .ev-when { color: var(--mist); font-size: 15px; }
+.ev-when { font-family: var(--f-mono); font-size: 13px; letter-spacing: .04em; }
+.ev-go { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 1px var(--line-strong); transition: background .4s, transform .6s var(--ease); justify-self: end; }
+.ev-go svg { width: 18px; height: 18px; stroke: currentColor; transition: transform .6s var(--ease); }
+.ev-btn:hover .ev-go { background: var(--glow); color: var(--ink); box-shadow: none; }
+.ev-btn:hover .ev-go svg { transform: rotate(-45deg); }
+.ev-thumb { display: none; }
+.ev.is-out { display: none; }
+.ev-more { margin-top: 48px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; padding: 32px; border-radius: 20px; background: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line); }
+.ev-more p { margin: 0; max-width: 52ch; color: var(--mist); }
+.ev-more strong { display: block; color: var(--pearl); font-family: var(--f-display); text-transform: uppercase; font-size: 30px; line-height: 1; margin-bottom: 8px; font-weight: 800; }
+
+/* floating preview */
+.preview { position: fixed; left: 0; top: 0; z-index: 40; width: 340px; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; pointer-events: none;
+  opacity: 0; transform: translate3d(-50%, -50%, 0) scale(.6); transition: opacity .35s var(--ease), scale .5s var(--ease); box-shadow: 0 30px 60px -20px rgba(0,0,0,.7); }
+.preview.on { opacity: 1; }
+.preview .pv-img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: opacity .35s; }
+.preview .pv-label { position: absolute; left: 14px; bottom: 12px; font-family: var(--f-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--pearl); background: rgba(15,12,18,.7); padding: 6px 10px; border-radius: 999px; }
+
+/* promise */
+.promise-text { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: clamp(40px, 6.2vw, 92px); line-height: .98; margin: 0 0 clamp(64px, 8vw, 110px); max-width: 16ch; text-wrap: balance; }
+.promise-text .w { opacity: var(--o, 1); transition: opacity .2s linear; }
+.promise-text .accent { color: var(--glow); }
+.pillars { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border-radius: 22px; overflow: hidden; }
+.pillar { background: var(--ink); padding: clamp(28px, 4vw, 48px); display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 22px; align-items: start; transition: background .5s; }
+.pillar:hover { background: var(--ink-2); }
+.pillar .k { font-family: var(--f-mono); font-size: 12px; color: var(--glow); letter-spacing: .1em; padding-top: 10px; grid-row: span 2; }
+.pillar h3 { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: clamp(32px, 3.2vw, 44px); line-height: 1; margin: 0; }
+.pillar p { margin: 0; color: var(--mist); }
+
+/* request */
+.request { background: var(--ink-2); overflow: hidden; }
+.req-grid { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(40px, 6vw, 96px); align-items: start; }
+.req-intro { display: flex; flex-direction: column; gap: 24px; position: sticky; top: 110px; min-width: 0; }
+.direct { margin-top: 12px; display: grid; gap: 0; border-top: 1px solid var(--line); }
+.direct a { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); transition: padding .5s var(--ease), color .3s; min-width: 0; }
+.direct a:hover { padding-left: 10px; color: var(--glow); }
+.direct span { font-family: var(--f-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--mist); flex: none; }
+.direct b { font-weight: 500; overflow-wrap: anywhere; text-align: right; }
+
+.form { background: var(--ink); border-radius: 24px; padding: clamp(24px, 4vw, 48px); box-shadow: inset 0 0 0 1px var(--line); position: relative; min-width: 0; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 20px; }
+.field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.field.full { grid-column: 1 / -1; }
+.field label { font-family: var(--f-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--mist); }
+.field label em { color: var(--glow); font-style: normal; }
+.field input, .field select, .field textarea {
+  width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--line-strong); color: var(--pearl);
+  font: inherit; font-size: 17px; padding: 10px 0 12px; border-radius: 0; outline: none; transition: border-color .3s; -webkit-appearance: none; appearance: none; }
+.field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23a59ba8' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 4px center; padding-right: 24px; cursor: pointer; }
+.field select option { background: var(--ink-2); color: var(--pearl); }
+.field textarea { resize: vertical; min-height: 96px; }
+.field input::placeholder, .field textarea::placeholder { color: rgba(165,155,168,.55); }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--glow); }
+.field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible { outline: none; }
+.field.err input { border-color: #ff8a7a; }
+.field .msg { font-size: 13px; color: #ff9f92; min-height: 0; }
+.types { display: flex; flex-wrap: wrap; gap: 8px; }
+.types input { position: absolute; opacity: 0; pointer-events: none; }
+.types label { font-family: var(--f-body); font-size: 14px; letter-spacing: 0; text-transform: none; color: var(--mist); height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line-strong); display: inline-flex; align-items: center; cursor: pointer; transition: all .3s; }
+.types input:checked + label { background: var(--glow); color: var(--ink); border-color: var(--glow); }
+.types input:focus-visible + label { outline: 2px solid var(--glow); outline-offset: 2px; }
+.seats { display: flex; align-items: center; gap: 0; border-bottom: 1px solid var(--line-strong); }
+.seats button { width: 40px; height: 44px; background: none; border: 0; cursor: pointer; color: var(--glow); font-size: 22px; }
+.seats input { border: 0 !important; text-align: center; font-family: var(--f-display); font-weight: 800; font-size: 26px; padding: 6px 0; -moz-appearance: textfield; }
+.seats input::-webkit-outer-spin-button, .seats input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.form-foot { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; }
+.form-foot p { margin: 0; font-size: 14px; color: var(--mist); max-width: 30ch; }
+
+.done { position: absolute; inset: 0; border-radius: inherit; background: var(--ink); display: flex; flex-direction: column; justify-content: center; gap: 20px; padding: clamp(24px, 4vw, 48px); z-index: 2; }
+.done h3 { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: clamp(44px, 5vw, 64px); line-height: .92; margin: 0; }
+.done p { margin: 0; color: var(--mist); max-width: 44ch; }
+.done .row { display: flex; flex-wrap: wrap; gap: 12px; }
+.done .back { background: none; border: 0; color: var(--mist); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; align-self: flex-start; padding: 0; font-size: 14px; }
+.check { width: 64px; height: 64px; }
+.check circle, .check path { fill: none; stroke: var(--glow); stroke-width: 2; }
+.check circle { stroke-dasharray: 190; stroke-dashoffset: 190; animation: draw 1s var(--ease) forwards; }
+.check path { stroke-dasharray: 40; stroke-dashoffset: 40; animation: draw .6s .5s var(--ease) forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* faq */
+.faq-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 32px 64px; }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq details:first-child { border-top: 1px solid var(--line); }
+.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 24px 0; font-size: 19px; font-weight: 500; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary i { width: 14px; height: 14px; position: relative; flex: none; }
+.faq summary i::before, .faq summary i::after { content: ""; position: absolute; left: 0; right: 0; top: 6px; height: 1.5px; background: var(--glow); transition: transform .5s var(--ease); }
+.faq summary i::after { transform: rotate(90deg); }
+.faq details[open] summary i::after { transform: rotate(0); }
+.faq .ans { color: var(--mist); padding: 0 0 26px; max-width: 60ch; margin: 0; }
+
+/* footer */
+.foot { padding-top: clamp(80px, 10vw, 140px); padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)); overflow: hidden; }
+.foot-cta { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 32px; padding-bottom: 56px; border-bottom: 1px solid var(--line); }
+.foot-cta h2 { font-size: clamp(52px, 8vw, 120px); }
+.foot-cols { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr)); gap: 40px; padding-block: 48px; }
+.foot-cols p { margin: 0; color: var(--mist); max-width: 40ch; }
+.foot-cols h4 { margin: 0 0 14px; font-family: var(--f-mono); font-weight: 400; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--glow); }
+.foot-cols ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.foot-cols a { color: var(--pearl); transition: color .3s; overflow-wrap: anywhere; }
+.foot-cols a:hover { color: var(--glow); }
+.wordmark { font-family: var(--f-display); font-weight: 900; text-transform: uppercase; line-height: .78; font-size: clamp(64px, 19.5vw, 300px); letter-spacing: -.01em; white-space: nowrap; color: var(--ink-3); user-select: none; margin-top: 12px; }
+.wordmark span { color: transparent; -webkit-text-stroke: 1px var(--line-strong); }
+.legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-family: var(--f-mono); font-size: 12px; color: var(--mist); letter-spacing: .06em; padding-top: 24px; border-top: 1px solid var(--line); }
+
+/* mobile sticky cta */
+.sticky-cta { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  background: linear-gradient(180deg, transparent, rgba(15,12,18,.92) 40%); display: none; transform: translateY(120%); transition: transform .6s var(--ease); }
+.sticky-cta.on { transform: none; }
+.sticky-cta .btn { width: 100%; justify-content: center; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1080px) {
+  .ev-btn { grid-template-columns: 100px minmax(0, 1fr) 160px 48px; }
+  .ev-when { display: none; }
+  .services { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .service:nth-child(3) { border-left: 0; padding-left: 0; }
+  .service:nth-child(n+3) { border-top: 1px solid var(--line); }
+}
+@media (max-width: 860px) {
+  .nav .link, .nav .btn { display: none; }
+  .burger { display: block; }
+  .hero { padding-top: 118px; padding-bottom: 64px; }
+  .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 48px; }
+  .pass { max-width: 300px; }
+  .pass-access { font-size: 62px; }
+  .sec-head, .req-grid, .faq-grid { grid-template-columns: minmax(0, 1fr); }
+  .req-intro { position: static; }
+  .steps { grid-template-columns: minmax(0, 1fr); gap: 44px; }
+  .steps-line { left: 36px; right: auto; top: 0; bottom: 0; width: 1px; height: auto; }
+  .steps-line i { transform-origin: top; transform: scaleY(var(--p, 1)); }
+  .step { padding-left: 100px; }
+  .step-num { position: absolute; left: 0; top: 0; margin: 0; }
+  .pillars { grid-template-columns: minmax(0, 1fr); }
+  .foot-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .foot-cols > div:first-child { grid-column: 1 / -1; }
+  .sticky-cta { display: block; }
+}
+@media (max-width: 620px) {
+  body { font-size: 16px; }
+  .services { grid-template-columns: minmax(0, 1fr); }
+  .service, .service + .service { padding: 30px 0; border-left: 0; }
+  .service + .service { border-top: 1px solid var(--line); }
+  .ev-btn { grid-template-columns: 64px minmax(0, 1fr) 40px; gap: 16px; padding: 18px 0; }
+  .ev-btn::before { inset: 0 -10px; }
+  .ev-thumb { display: block; width: 64px; height: 64px; border-radius: 12px; background-size: cover; background-position: center; grid-row: 1 / span 3; grid-column: 1; }
+  .ev-cat { grid-column: 2; grid-row: 1; font-size: 11px; }
+  .ev-name { grid-column: 2; grid-row: 2; font-size: 30px; }
+  .ev-where { grid-column: 2; grid-row: 3; font-size: 14px; margin-top: -8px; }
+  .ev-go { grid-column: 3; grid-row: 1 / span 3; width: 40px; height: 40px; }
+  .ev-btn:hover .ev-name { transform: none; }
+  .form-grid { grid-template-columns: minmax(0, 1fr); }
+  .hero-actions .btn { flex: 1 1 auto; justify-content: center; }
+  .ev-more { padding: 24px; }
+  .done .row .btn { flex: 1 1 auto; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  .marquee-track { animation: none; }
+  .grain { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ============ HEADER ============ -->
+<header class="site-head" id="top-bar">
+  <div class="wrap head-row">
+    <a href="#accueil" class="logo" aria-label="TMK Moments, accueil">TMK <span>Moments</span></a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a class="link" href="#evenements">Événements</a>
+      <a class="link" href="#services">Services</a>
+      <a class="link" href="#methode">Comment ça marche</a>
+      <a class="link" href="#promesse">À propos</a>
+      <a class="btn btn--small magnetic" href="#demande">Faire une demande
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu"><i></i><i></i></button>
+    </nav>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+  <a href="#evenements">Événements</a>
+  <a href="#services">Services</a>
+  <a href="#methode">Méthode</a>
+  <a href="#promesse">À propos</a>
+  <a href="#demande" style="color: var(--glow)">Demande</a>
+  <div class="mm-foot">
+    <span>WhatsApp · +33 7 85 73 96 07</span>
+    <span>Instagram · @tmkmoments</span>
+  </div>
+</div>
+
+<main>
+<!-- ============ HERO ============ -->
+<section class="hero" id="accueil">
+  <div class="hero-bg" aria-hidden="true"><img src="assets/img/hero-concert.webp" alt="" id="hero-img" fetchpriority="high"></div>
+  <div class="spot" aria-hidden="true"></div>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow h-in">Conciergerie événements</span>
+      <h1 class="display">
+        <span class="line"><span><span class="strike" id="strike">Complet</span>&nbsp;?</span></span>
+        <span class="line"><span>Pas pour</span></span>
+        <span class="line"><span><em>vous.</em></span></span>
+      </h1>
+      <p class="lead h-in">Concerts à guichets fermés, grands matchs, festivals, accès backstage. Vous nous dites ce qui vous fait rêver, votre concierge dédié s'occupe du reste.</p>
+      <div class="hero-actions h-in">
+        <a href="#demande" class="btn magnetic">Faire une demande
+          <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a href="#evenements" class="btn btn--ghost magnetic">Voir les événements</a>
+      </div>
+      <div class="hero-meta h-in">
+        <span><b>Réponse</b> sous 24 à 48 h</span>
+        <span><b>Concierge</b> dédié</span>
+        <span><b>France</b> · Europe</span>
+      </div>
+    </div>
+
+    <div class="pass-stage h-pass">
+      <div class="pass" id="pass" aria-label="Pass VIP TMK Moments">
+        <div class="pass-notch" aria-hidden="true"><i></i><i></i></div>
+        <div class="pass-top">
+          <div class="pass-brand">TMK<small>Moments · Pass</small></div>
+          <div class="pass-chip" aria-hidden="true"></div>
+        </div>
+        <div class="pass-access" aria-hidden="true">All<br>Access<br><span>VIP</span></div>
+        <div class="pass-event">
+          <div class="pass-field"><label>Événement</label><span class="v"><span class="swap" data-k="name">Jul · Vélodrome</span></span></div>
+          <div class="pass-row">
+            <div class="pass-field"><label>Lieu</label><span class="v"><span class="swap" data-k="place">Marseille</span></span></div>
+            <div class="pass-field"><label>Date</label><span class="v"><span class="swap" data-k="date">2026</span></span></div>
+          </div>
+        </div>
+        <div class="pass-barcode" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track" id="marquee"></div>
+</div>
+
+<!-- ============ SERVICES ============ -->
+<section class="section" id="services">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">Ce que nous offrons</span>
+        <h2 class="display h2 reveal">Le meilleur siège.<br>Sans la file.</h2>
+      </div>
+      <p class="lead reveal">Une seule adresse pour accéder à ce qui affiche complet. Nous activons notre réseau pour trouver les bonnes places, au bon prix, et nous gérons chaque détail jusqu'au jour J.</p>
+    </div>
+    <div class="services">
+      <article class="service reveal">
+        <svg viewBox="0 0 40 40"><path d="M6 12h28v5a3 3 0 0 0 0 6v5H6v-5a3 3 0 0 0 0-6z"/><path d="M15 12v16" stroke-dasharray="2 3"/></svg>
+        <h3>Événements exclusifs</h3>
+        <p>Concerts complets, matchs de Ligue 1 ou de Ligue des Champions, spectacles premium et festivals.</p>
+      </article>
+      <article class="service reveal">
+        <svg viewBox="0 0 40 40"><path d="M20 5l4.5 9.2 10.1 1.5-7.3 7.1 1.7 10L20 28l-9 4.8 1.7-10-7.3-7.1 10.1-1.5z"/></svg>
+        <h3>Expériences VIP</h3>
+        <p>Accès backstage, rencontres avec les artistes et packages hospitalité pour vivre l'événement autrement.</p>
+      </article>
+      <article class="service reveal">
+        <svg viewBox="0 0 40 40"><rect x="7" y="9" width="26" height="24" rx="3"/><path d="M7 16h26M14 5v7M26 5v7M15 24l4 4 7-8"/></svg>
+        <h3>Réservation simple</h3>
+        <p>Une demande suffit. Vous recevez des options claires, vous choisissez, nous nous occupons de tout.</p>
+      </article>
+      <article class="service reveal">
+        <svg viewBox="0 0 40 40"><circle cx="20" cy="14" r="6"/><path d="M8 34c1.5-7 6.5-10 12-10s10.5 3 12 10"/></svg>
+        <h3>Service personnel</h3>
+        <p>Un concierge dédié qui suit votre demande de bout en bout et retient vos préférences.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ METHOD ============ -->
+<section class="section method" id="methode">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">Comment ça marche</span>
+        <h2 class="display h2 reveal">Trois étapes.<br>Zéro stress.</h2>
+      </div>
+      <p class="lead reveal">Pas de compte à créer, pas de file d'attente virtuelle. Vous parlez à une personne, du premier message jusqu'à l'entrée dans la salle.</p>
+    </div>
+    <div class="steps" id="steps">
+      <div class="steps-line" aria-hidden="true"><i id="steps-fill"></i></div>
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <h3>Vous demandez</h3>
+        <p>Remplissez le formulaire ou écrivez-nous sur WhatsApp : l'événement, la ville, le nombre de places et votre budget si vous en avez un.</p>
+        <span class="tag">2 minutes</span>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <h3>On trouve</h3>
+        <p>Votre concierge active son réseau et revient vers vous avec des options personnalisées : catégories, placements, accès VIP.</p>
+        <span class="tag">Sous 24 à 48 h</span>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <h3>Vous vivez</h3>
+        <p>Vous validez l'option qui vous plaît. On gère la suite jusqu'au jour J, vous n'avez plus qu'à profiter du moment.</p>
+        <span class="tag">Le jour J</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EVENTS ============ -->
+<section class="section" id="evenements">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">Saison 2025 – 2026</span>
+        <h2 class="display h2 reveal">À l'affiche</h2>
+      </div>
+      <div>
+        <p class="lead">Une sélection des événements que l'on vous ouvre en ce moment. Choisissez-en un pour lancer votre demande.</p>
+        <div class="filters" role="group" aria-label="Filtrer par type" id="filters"></div>
+      </div>
+    </div>
+
+    <ul class="ev-list" id="ev-list"></ul>
+
+    <div class="ev-more reveal">
+      <div>
+        <strong>Votre événement n'est pas listé ?</strong>
+        <p>Nous avons accès à bien plus que cette sélection. Dites-nous ce que vous cherchez, en France ou à l'étranger, et nous le trouverons.</p>
+      </div>
+      <a href="#demande" class="btn btn--ghost magnetic" data-prefill="">Demande personnalisée
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+  </div>
+  <div class="preview" id="preview" aria-hidden="true"><div class="pv-img" id="pv-img"></div><span class="pv-label" id="pv-label"></span></div>
+</section>
+
+<!-- ============ PROMISE / ABOUT ============ -->
+<section class="section" id="promesse" style="padding-top: 0">
+  <div class="wrap">
+    <span class="eyebrow" style="margin-bottom: 28px">L'art des moments inoubliables</span>
+    <p class="promise-text" id="promise">Les plus beaux souvenirs naissent d'expériences <span class="accent">extraordinaires</span>. Nous ouvrons les portes dont les autres ne font que rêver.</p>
+    <div class="pillars">
+      <div class="pillar reveal"><span class="k">A</span><h3>Exclusivité</h3><p>Des accès à des événements qui ne sont pas ouverts au grand public. Nous ouvrons des portes que d'autres ne peuvent pas ouvrir.</p></div>
+      <div class="pillar reveal"><span class="k">B</span><h3>Simplicité</h3><p>Une seule demande suffit. Nous gérons chaque détail pour que vous puissiez profiter du moment.</p></div>
+      <div class="pillar reveal"><span class="k">C</span><h3>Accès premium</h3><p>Billets VIP, accès backstage et les meilleures places. Toujours.</p></div>
+      <div class="pillar reveal"><span class="k">D</span><h3>Service personnel</h3><p>Chaque demande est traitée personnellement. Votre concierge connaît vos préférences.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REQUEST ============ -->
+<section class="section request" id="demande">
+  <div class="wrap req-grid">
+    <div class="req-intro">
+      <span class="eyebrow">Demande personnalisée</span>
+      <h2 class="display h2">Dites-nous<br>votre <span style="color: var(--glow)">moment.</span></h2>
+      <p class="lead">Concert complet, match VIP, festival à l'étranger : décrivez ce que vous cherchez. Nous revenons vers vous sous 24 à 48 heures avec des options sur mesure.</p>
+      <div class="direct">
+        <a href="https://wa.me/33785739607" target="_blank" rel="noopener"><span>WhatsApp</span><b>+33 7 85 73 96 07</b></a>
+        <a href="https://instagram.com/tmkmoments" target="_blank" rel="noopener"><span>Instagram</span><b>@tmkmoments</b></a>
+        <a href="mailto:tmkmoments@tmkpsrt.com"><span>Email</span><b>tmkmoments@tmkpsrt.com</b></a>
+      </div>
+    </div>
+
+    <form class="form" id="form" novalidate>
+      <div class="form-grid">
+        <div class="field full">
+          <label>Type d'événement</label>
+          <div class="types" role="radiogroup" aria-label="Type d'événement">
+            <input type="radio" name="type" id="t-concert" value="Concert" checked><label for="t-concert">Concert</label>
+            <input type="radio" name="type" id="t-sport" value="Sport"><label for="t-sport">Sport</label>
+            <input type="radio" name="type" id="t-spectacle" value="Spectacle / Théâtre"><label for="t-spectacle">Spectacle / Théâtre</label>
+            <input type="radio" name="type" id="t-festival" value="Festival"><label for="t-festival">Festival</label>
+            <input type="radio" name="type" id="t-autre" value="Autre"><label for="t-autre">Autre</label>
+          </div>
+        </div>
+        <div class="field full">
+          <label for="eventName">Nom de l'événement</label>
+          <input id="eventName" name="eventName" placeholder="Ex : Jul au Stade de France" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="city">Ville</label>
+          <input id="city" name="city" placeholder="Paris, Londres, New York…">
+        </div>
+        <div class="field">
+          <label for="dates">Date(s)</label>
+          <input id="dates" name="dates" placeholder="Ex : 14 juin, ou flexible">
+        </div>
+        <div class="field">
+          <label for="seats">Nombre de places <em>*</em></label>
+          <div class="seats">
+            <button type="button" id="seat-minus" aria-label="Retirer une place">−</button>
+            <input id="seats" name="seats" type="number" min="1" max="50" value="2" inputmode="numeric" required>
+            <button type="button" id="seat-plus" aria-label="Ajouter une place">+</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="budget">Budget <span style="text-transform:none; letter-spacing:0">(optionnel)</span></label>
+          <input id="budget" name="budget" placeholder="500 € – 1 000 €">
+        </div>
+        <div class="field full">
+          <label for="category">Catégorie souhaitée</label>
+          <input id="category" name="category" placeholder="Ex : Catégorie 1, Carré Or, Fosse…">
+        </div>
+        <div class="field">
+          <label for="fullName">Nom complet <em>*</em></label>
+          <input id="fullName" name="fullName" placeholder="Jean Dupont" autocomplete="name" required>
+          <span class="msg" id="fullName-msg"></span>
+        </div>
+        <div class="field">
+          <label for="email">Email <em>*</em></label>
+          <input id="email" name="email" type="email" placeholder="jean@exemple.com" autocomplete="email" required>
+          <span class="msg" id="email-msg"></span>
+        </div>
+        <div class="field full">
+          <label for="instagram">Instagram</label>
+          <input id="instagram" name="instagram" placeholder="@votrenom">
+        </div>
+        <div class="field full">
+          <label for="message">Demandes spéciales</label>
+          <textarea id="message" name="message" placeholder="Accès VIP ? Places côte à côte ? Dites-nous tout."></textarea>
+        </div>
+      </div>
+      <div class="form-foot">
+        <p>Réponse sous 24 à 48 heures avec des options personnalisées.</p>
+        <button class="btn magnetic" type="submit">Envoyer la demande
+          <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
+
+      <div class="done" id="done" hidden>
+        <svg class="check" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30"/><path d="M20 33l8 8 16-18"/></svg>
+        <h3>Votre demande<br>est prête.</h3>
+        <p id="done-text">Envoyez-la à votre concierge en un geste. Le message est déjà rédigé avec tous vos détails.</p>
+        <div class="row">
+          <a class="btn" id="send-wa" href="https://wa.me/33785739607" target="_blank" rel="noopener">Envoyer sur WhatsApp
+            <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="btn btn--ghost" id="send-mail" href="mailto:tmkmoments@tmkpsrt.com">Envoyer par email</a>
+        </div>
+        <button type="button" class="back" id="back">Modifier ma demande</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section faq" id="faq">
+  <div class="wrap faq-grid">
+    <div style="display:flex; flex-direction:column; gap:20px">
+      <span class="eyebrow">Questions fréquentes</span>
+      <h2 class="display h2">Bon à<br>savoir</h2>
+    </div>
+    <div>
+      <details open>
+        <summary>En combien de temps recevrai-je une réponse ?<i></i></summary>
+        <p class="ans">Nous revenons vers vous sous 24 à 48 heures avec des options personnalisées. Pour une demande urgente, écrivez-nous directement sur WhatsApp.</p>
+      </details>
+      <details>
+        <summary>Je ne trouve pas mon événement dans la liste.<i></i></summary>
+        <p class="ans">La sélection affichée n'est qu'un aperçu. Nous avons accès à des événements non listés : faites une demande personnalisée avec le nom de l'événement, la ville et la date.</p>
+      </details>
+      <details>
+        <summary>Dois-je indiquer un budget ?<i></i></summary>
+        <p class="ans">Ce n'est pas obligatoire, mais une fourchette nous aide à vous proposer directement les options qui vous correspondent.</p>
+      </details>
+      <details>
+        <summary>Quels types d'événements couvrez-vous ?<i></i></summary>
+        <p class="ans">Concerts, sport (football, tennis…), spectacles et festivals, en France et en Europe. Nous proposons aussi des expériences VIP : backstage, rencontres avec les artistes, hospitalité.</p>
+      </details>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-cta">
+      <h2 class="display">Prêt à vivre<br><span style="color: var(--glow)">l'extraordinaire ?</span></h2>
+      <a href="#demande" class="btn magnetic">Commencer ma demande
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+    <div class="foot-cols">
+      <div>
+        <a href="#accueil" class="logo" style="margin-bottom: 14px">TMK <span>Moments</span></a>
+        <p>Votre conciergerie exclusive pour événements. Accès premium aux concerts, au sport et aux expériences VIP, avec un service personnalisé.</p>
+      </div>
+      <div>
+        <h4>Explorer</h4>
+        <ul>
+          <li><a href="#evenements">Événements</a></li>
+          <li><a href="#methode">Comment ça marche</a></li>
+          <li><a href="#promesse">À propos</a></li>
+          <li><a href="#demande">Demande personnalisée</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="https://wa.me/33785739607" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a href="https://instagram.com/tmkmoments" target="_blank" rel="noopener">@tmkmoments</a></li>
+          <li><a href="mailto:tmkmoments@tmkpsrt.com">tmkmoments@tmkpsrt.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="wordmark" aria-hidden="true">TMK <span>Moments</span></div>
+    <div class="legal"><span>© 2026 TMK Moments. Tous droits réservés.</span><span>Conciergerie premium événements</span></div>
+  </div>
+</footer>
+
+<div class="sticky-cta" id="sticky-cta"><a href="#demande" class="btn">Faire une demande
+  <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var $ = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+
+  /* ---------------- data ---------------- */
+  var IMG = "assets/img/";
+  var EVENTS = [
+    { cat: "Concert",   name: "Jul · Vélodrome",         where: "Marseille",              when: "2026",              img: "jul-velodrome.webp" },
+    { cat: "Concert",   name: "Jul · Stade de France",   where: "Paris",                  when: "2026",              img: "jul-stade-de-france.webp" },
+    { cat: "Concert",   name: "The Weeknd",              where: "Paris / Nice",           when: "2026",              img: "the-weeknd.webp" },
+    { cat: "Concert",   name: "Bad Bunny",               where: "Paris",                  when: "2026",              img: "bad-bunny.webp" },
+    { cat: "Concert",   name: "Bruno Mars · Stade de France", where: "Paris",             when: "2026",              g: ["#5b2a86", "#f2c7a5"] },
+    { cat: "Concert",   name: "BTS",                     where: "Paris",                  when: "2026",              g: ["#3d2a6b", "#d98fb8"] },
+    { cat: "Sport",     name: "Roland-Garros",           where: "Paris",                  when: "Mai – Juin 2026",   img: "roland-garros.webp" },
+    { cat: "Sport",     name: "Ligue des Champions",     where: "Europe",                 when: "Saison 25 – 26",    g: ["#0d1b4d", "#7aa2ff"] },
+    { cat: "Sport",     name: "Ligue 1",                 where: "Paris, Marseille, Lyon…",when: "Saison 25 – 26",    img: "ligue-1.webp" },
+    { cat: "Sport",     name: "Premier League",          where: "Angleterre",             when: "Saison 25 – 26",    img: "premier-league.webp" },
+    { cat: "Spectacle", name: "Circolo Paris",           where: "Paris",                  when: "2026",              g: ["#4a1424", "#f2a07a"] },
+    { cat: "Festival",  name: "Tomorrowland",            where: "Boom, Belgique",         when: "Juillet 2026",      g: ["#13294b", "#c9a0ff"] },
+    { cat: "Festival",  name: "Les Ardentes",            where: "Liège, Belgique",        when: "Juillet 2026",      g: ["#3a1c0f", "#ffb36b"] },
+    { cat: "Festival",  name: "VnB Fest",                where: "France",                 when: "2026",              g: ["#1b3a2f", "#b7f0c8"] }
+  ];
+  var TYPE_FOR = { Concert: "t-concert", Sport: "t-sport", Spectacle: "t-spectacle", Festival: "t-festival" };
+  function bg(ev) {
+    return ev.img ? "url('" + IMG + ev.img + "')"
+      : "radial-gradient(120% 90% at 80% 10%, " + ev.g[1] + " 0%, transparent 55%), linear-gradient(135deg, " + ev.g[0] + ", #0f0c12)";
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  /* ---------------- marquee ---------------- */
+  var mq = $("#marquee");
+  var names = EVENTS.map(function (e) { return e.name; });
+  var mqHtml = names.map(function (n) { return '<span class="marquee-item">' + esc(n) + "</span>"; }).join("");
+  mq.innerHTML = mqHtml + mqHtml;
+
+  /* ---------------- events list ---------------- */
+  var list = $("#ev-list");
+  var arrow = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  list.innerHTML = EVENTS.map(function (e, i) {
+    return '<li class="ev" data-cat="' + e.cat + '"><button type="button" class="ev-btn" data-i="' + i + '" aria-label="Demander ' + esc(e.name) + '">' +
+      '<span class="ev-thumb" style="background-image:' + bg(e).replace(/"/g, "&quot;") + '"></span>' +
+      '<span class="ev-cat">' + e.cat + "</span>" +
+      '<span class="ev-name">' + esc(e.name) + "</span>" +
+      '<span class="ev-where">' + esc(e.where) + "</span>" +
+      '<span class="ev-when">' + esc(e.when) + "</span>" +
+      '<span class="ev-go">' + arrow + "</span></button></li>";
+  }).join("");
+
+  // filters
+  var cats = ["Tous", "Concert", "Sport", "Spectacle", "Festival"];
+  var filters = $("#filters");
+  filters.innerHTML = cats.map(function (c, i) {
+    var n = c === "Tous" ? EVENTS.length : EVENTS.filter(function (e) { return e.cat === c; }).length;
+    return '<button type="button" class="chip" aria-pressed="' + (i === 0) + '" data-cat="' + c + '">' + c + " <sup>" + n + "</sup></button>";
+  }).join("");
+  filters.addEventListener("click", function (ev) {
+    var b = ev.target.closest(".chip"); if (!b) return;
+    $$(".chip", filters).forEach(function (c) { c.setAttribute("aria-pressed", String(c === b)); });
+    var cat = b.dataset.cat;
+    var shown = [];
+    $$(".ev", list).forEach(function (li) {
+      var on = cat === "Tous" || li.dataset.cat === cat;
+      li.classList.toggle("is-out", !on);
+      if (on) shown.push(li);
+    });
+    if (window.gsap && !reduce) {
+      gsap.fromTo(shown, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: .6, stagger: .04, ease: "power3.out", overwrite: true });
+    }
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
+  });
+
+  // click -> prefill form
+  function prefill(e) {
+    if (e) {
+      $("#eventName").value = e.name.replace(" · ", " - ");
+      $("#city").value = e.where;
+      var t = document.getElementById(TYPE_FOR[e.cat] || "t-autre"); if (t) t.checked = true;
+    }
+    var target = $("#demande");
+    target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    setTimeout(function () { (e ? $("#seats") : $("#eventName")).focus({ preventScroll: true }); }, reduce ? 0 : 900);
+  }
+  list.addEventListener("click", function (ev) {
+    var b = ev.target.closest(".ev-btn"); if (!b) return;
+    prefill(EVENTS[+b.dataset.i]);
+  });
+  $$("[data-prefill]").forEach(function (a) { a.addEventListener("click", function (ev) { ev.preventDefault(); $("#eventName").value = ""; prefill(null); }); });
+
+  // floating preview following cursor
+  var pv = $("#preview"), pvImg = $("#pv-img"), pvLabel = $("#pv-label");
+  if (finePointer && !reduce) {
+    var mx = 0, my = 0, px = 0, py = 0, active = false, raf = null;
+    var loop = function () {
+      px += (mx - px) * .14; py += (my - py) * .14;
+      var rot = Math.max(-10, Math.min(10, (mx - px) * .06));
+      pv.style.transform = "translate3d(" + (px + 28) + "px," + (py - 120) + "px,0) rotate(" + rot + "deg) scale(" + (active ? 1 : .6) + ")";
+      raf = requestAnimationFrame(loop);
+    };
+    list.addEventListener("pointermove", function (e) { mx = e.clientX; my = e.clientY; });
+    list.addEventListener("pointerover", function (e) {
+      var b = e.target.closest(".ev-btn"); if (!b) return;
+      var ev = EVENTS[+b.dataset.i];
+      pvImg.style.backgroundImage = bg(ev);
+      pvLabel.textContent = ev.where + " · " + ev.when;
+      if (!active) { px = mx = e.clientX; py = my = e.clientY; }
+      active = true; pv.classList.add("on");
+      if (!raf) loop();
+    });
+    list.addEventListener("pointerleave", function () {
+      active = false; pv.classList.remove("on");
+      setTimeout(function () { if (!active && raf) { cancelAnimationFrame(raf); raf = null; } }, 400);
+    });
+  }
+
+  /* ---------------- header ---------------- */
+  var head = $("#top-bar"), lastY = 0, sticky = $("#sticky-cta");
+  function onScroll() {
+    var y = window.scrollY;
+    head.classList.toggle("is-scrolled", y > 20);
+    head.classList.toggle("is-hidden", y > 400 && y > lastY && !document.body.classList.contains("menu-open"));
+    lastY = y;
+    var req = $("#demande").getBoundingClientRect();
+    sticky.classList.toggle("on", y > window.innerHeight * .8 && (req.top > window.innerHeight || req.bottom < 0));
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  // mobile menu
+  var burger = $("#burger"), menu = $("#mobile-menu");
+  function setMenu(open) {
+    document.body.classList.toggle("menu-open", open);
+    burger.setAttribute("aria-expanded", String(open));
+    burger.setAttribute("aria-label", open ? "Fermer le menu" : "Ouvrir le menu");
+    menu.setAttribute("aria-hidden", String(!open));
+    document.body.style.overflow = open ? "hidden" : "";
+  }
+  burger.addEventListener("click", function () { setMenu(!document.body.classList.contains("menu-open")); });
+  $$("a", menu).forEach(function (a) { a.addEventListener("click", function () { setMenu(false); }); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") setMenu(false); });
+
+  /* ---------------- hero: spotlight + pass tilt + pass cycling ---------------- */
+  var hero = $(".hero"), pass = $("#pass");
+  if (finePointer && !reduce) {
+    hero.addEventListener("pointermove", function (e) {
+      var r = hero.getBoundingClientRect();
+      hero.style.setProperty("--mx", (e.clientX - r.left) + "px");
+      hero.style.setProperty("--my", (e.clientY - r.top) + "px");
+      var pr = pass.getBoundingClientRect();
+      var nx = (e.clientX - (pr.left + pr.width / 2)) / (r.width / 2);
+      var ny = (e.clientY - (pr.top + pr.height / 2)) / (r.height / 2);
+      nx = Math.max(-1, Math.min(1, nx)); ny = Math.max(-1, Math.min(1, ny));
+      pass.style.setProperty("--ry", (nx * 14) + "deg");
+      pass.style.setProperty("--rx", (-ny * 12) + "deg");
+      pass.style.setProperty("--px", (50 + nx * 40) + "%");
+      pass.style.setProperty("--py", (50 + ny * 40) + "%");
+    });
+    hero.addEventListener("pointerleave", function () {
+      pass.style.setProperty("--ry", "0deg"); pass.style.setProperty("--rx", "0deg");
+    });
+  }
+  var PASS = [
+    { name: "Jul · Vélodrome", place: "Marseille", date: "2026" },
+    { name: "Roland-Garros", place: "Paris", date: "Juin 2026" },
+    { name: "Tomorrowland", place: "Boom", date: "Juil. 2026" },
+    { name: "The Weeknd", place: "Paris", date: "2026" },
+    { name: "Ligue des Champions", place: "Europe", date: "25 – 26" },
+    { name: "Bad Bunny", place: "Paris", date: "2026" }
+  ];
+  var pi = 0;
+  if (!reduce) {
+    setInterval(function () {
+      if (document.hidden) return;
+      pi = (pi + 1) % PASS.length;
+      $$(".swap", pass).forEach(function (el, k) {
+        setTimeout(function () {
+          el.classList.add("out");
+          setTimeout(function () {
+            el.textContent = PASS[pi][el.dataset.k];
+            el.classList.remove("out"); el.classList.add("in");
+            void el.offsetWidth;
+            el.classList.remove("in");
+          }, 380);
+        }, k * 90);
+      });
+    }, 3400);
+  }
+
+  /* ---------------- magnetic buttons ---------------- */
+  if (finePointer && !reduce) {
+    $$(".magnetic").forEach(function (b) {
+      b.addEventListener("pointermove", function (e) {
+        var r = b.getBoundingClientRect();
+        var x = (e.clientX - r.left - r.width / 2) * .22, y = (e.clientY - r.top - r.height / 2) * .32;
+        b.style.transform = "translate(" + x + "px," + y + "px)";
+      });
+      b.addEventListener("pointerleave", function () { b.style.transform = ""; });
+    });
+  }
+
+  /* ---------------- form ---------------- */
+  var form = $("#form"), done = $("#done");
+  var seats = $("#seats");
+  $("#seat-minus").addEventListener("click", function () { seats.value = Math.max(1, (+seats.value || 1) - 1); });
+  $("#seat-plus").addEventListener("click", function () { seats.value = Math.min(50, (+seats.value || 0) + 1); });
+
+  function setErr(id, msg) {
+    var f = document.getElementById(id).closest(".field");
+    f.classList.toggle("err", !!msg);
+    document.getElementById(id + "-msg").textContent = msg || "";
+  }
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var name = $("#fullName").value.trim(), email = $("#email").value.trim();
+    var ok = true;
+    if (!name) { setErr("fullName", "Indiquez votre nom pour que l'on puisse vous répondre."); ok = false; } else setErr("fullName");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setErr("email", "Entrez une adresse email valide, par exemple jean@exemple.com."); ok = false; } else setErr("email");
+    if (!ok) { (name ? $("#email") : $("#fullName")).focus(); return; }
+
+    var type = (form.querySelector("input[name=type]:checked") || {}).value || "";
+    var rows = [
+      ["Nom", name], ["Email", email], ["Instagram", $("#instagram").value],
+      ["Type", type], ["Événement", $("#eventName").value], ["Ville", $("#city").value],
+      ["Date(s)", $("#dates").value], ["Places", seats.value], ["Budget", $("#budget").value],
+      ["Catégorie", $("#category").value], ["Détails", $("#message").value]
+    ].filter(function (r) { return String(r[1]).trim(); });
+    var body = "Bonjour TMK Moments, voici ma demande :\n\n" + rows.map(function (r) { return "• " + r[0] + " : " + String(r[1]).trim(); }).join("\n");
+    var subject = "Demande TMK Moments" + ($("#eventName").value ? " · " + $("#eventName").value : "");
+    $("#send-wa").href = "https://wa.me/33785739607?text=" + encodeURIComponent(body);
+    $("#send-mail").href = "mailto:tmkmoments@tmkpsrt.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    done.hidden = false;
+    if (window.gsap && !reduce) gsap.fromTo(done, { clipPath: "inset(100% 0 0 0 round 24px)" }, { clipPath: "inset(0% 0 0 0 round 24px)", duration: .9, ease: "expo.out" });
+    $("#send-wa").focus({ preventScroll: true });
+  });
+  $("#back").addEventListener("click", function () { done.hidden = true; $("#eventName").focus(); });
+
+  /* ---------------- GSAP motion ---------------- */
+  if (!window.gsap || reduce) return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  // load sequence
+  var tl = gsap.timeline({ defaults: { ease: "expo.out" } });
+  tl.from("#hero-img", { scale: 1.35, opacity: 0, duration: 2.4, ease: "power2.out" }, 0)
+    .from(".hero h1 .line > span", { yPercent: 115, duration: 1.3, stagger: .1 }, .15)
+    .fromTo("#strike", { "--strike": 0 }, { "--strike": 1, duration: .9, ease: "power3.inOut" }, .95)
+    .from(".h-in", { y: 26, opacity: 0, duration: 1.1, stagger: .08 }, .55)
+    .from(".h-pass", { y: 80, rotate: 6, opacity: 0, duration: 1.6 }, .4);
+
+  // hero parallax
+  gsap.to("#hero-img", { yPercent: 14, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+  gsap.to(".h-pass", { yPercent: -18, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+
+  // marquee speed reacts to scroll velocity
+  var track = $("#marquee");
+  ScrollTrigger.create({
+    onUpdate: function (self) {
+      var v = Math.min(4, 1 + Math.abs(self.getVelocity()) / 900);
+      track.getAnimations().forEach(function (a) { a.playbackRate = v * (self.direction < 0 ? -1 : 1); });
+    }
+  });
+
+  // reveals: movement only, content stays readable at rest
+  $$(".reveal").forEach(function (el) {
+    gsap.from(el, { y: 50, duration: 1.2, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 92%", once: true } });
+  });
+  // stagger the services & pillars
+  ScrollTrigger.batch(".ev", {
+    start: "top 95%", once: true,
+    onEnter: function (batch) { gsap.from(batch, { y: 40, duration: 1, stagger: .05, ease: "expo.out" }); }
+  });
+
+  // steps progress line
+  var fill = $("#steps-fill");
+  gsap.fromTo(fill, { "--p": 0 }, { "--p": 1, ease: "none", scrollTrigger: { trigger: "#steps", start: "top 75%", end: "bottom 60%", scrub: .6 } });
+
+  // promise: word-by-word light-up
+  var pt = $("#promise");
+  (function splitWords(node) {
+    Array.prototype.slice.call(node.childNodes).forEach(function (n) {
+      if (n.nodeType === 3) {
+        var frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(function (part) {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+          var s = document.createElement("span"); s.className = "w"; s.textContent = part; frag.appendChild(s);
+        });
+        node.replaceChild(frag, n);
+      } else if (n.nodeType === 1) { splitWords(n); }
+    });
+  })(pt);
+  var words = $$(".w", pt);
+  ScrollTrigger.create({
+    trigger: pt, start: "top 85%", end: "bottom 45%", scrub: true,
+    onUpdate: function (self) {
+      var p = self.progress * words.length;
+      words.forEach(function (w, i) { w.style.setProperty("--o", Math.max(.28, Math.min(1, p - i + 1)).toFixed(2)); });
+    }
+  });
+
+  // footer wordmark slide
+  gsap.from(".wordmark", { xPercent: -8, ease: "none", scrollTrigger: { trigger: ".foot", start: "top bottom", end: "bottom bottom", scrub: true } });
+})();
+</script>
+</body>
+</html>
