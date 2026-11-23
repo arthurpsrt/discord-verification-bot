@@ -465,10 +465,10 @@ section { position: relative; }
         </div>
         <div class="pass-access" aria-hidden="true">All<br>Access<br><span>VIP</span></div>
         <div class="pass-event">
-          <div class="pass-field"><label>Événement</label><span class="v"><span class="swap" data-k="name">Jul · Vélodrome</span></span></div>
+          <div class="pass-field"><label>Événement</label><span class="v"><span class="swap" data-k="name">Ligue des Champions</span></span></div>
           <div class="pass-row">
-            <div class="pass-field"><label>Lieu</label><span class="v"><span class="swap" data-k="place">Marseille</span></span></div>
-            <div class="pass-field"><label>Date</label><span class="v"><span class="swap" data-k="date">2026</span></span></div>
+            <div class="pass-field"><label>Lieu</label><span class="v"><span class="swap" data-k="place">Europe</span></span></div>
+            <div class="pass-field"><label>Date</label><span class="v"><span class="swap" data-k="date">26 – 27</span></span></div>
           </div>
         </div>
         <div class="pass-barcode" aria-hidden="true"></div>
@@ -556,7 +556,7 @@ section { position: relative; }
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <span class="eyebrow">Saison 2025 – 2026</span>
+        <span class="eyebrow">Saison 2026 – 2027</span>
         <h2 class="display h2 reveal">À l'affiche</h2>
       </div>
       <div>
@@ -621,7 +621,7 @@ section { position: relative; }
         </div>
         <div class="field full">
           <label for="eventName">Nom de l'événement</label>
-          <input id="eventName" name="eventName" placeholder="Ex : Jul au Stade de France" autocomplete="off">
+          <input id="eventName" name="eventName" placeholder="Ex : Ligue des Champions, match à Paris" autocomplete="off">
         </div>
         <div class="field">
           <label for="city">Ville</label>
@@ -768,20 +768,10 @@ section { position: relative; }
   /* ---------------- data ---------------- */
   var IMG = "assets/img/";
   var EVENTS = [
-    { cat: "Concert",   name: "Jul · Vélodrome",         where: "Marseille",              when: "2026",              img: "jul-velodrome.webp" },
-    { cat: "Concert",   name: "Jul · Stade de France",   where: "Paris",                  when: "2026",              img: "jul-stade-de-france.webp" },
-    { cat: "Concert",   name: "The Weeknd",              where: "Paris / Nice",           when: "2026",              img: "the-weeknd.webp" },
-    { cat: "Concert",   name: "Bad Bunny",               where: "Paris",                  when: "2026",              img: "bad-bunny.webp" },
-    { cat: "Concert",   name: "Bruno Mars · Stade de France", where: "Paris",             when: "2026",              g: ["#5b2a86", "#f2c7a5"] },
-    { cat: "Concert",   name: "BTS",                     where: "Paris",                  when: "2026",              g: ["#3d2a6b", "#d98fb8"] },
-    { cat: "Sport",     name: "Roland-Garros",           where: "Paris",                  when: "Mai – Juin 2026",   img: "roland-garros.webp" },
-    { cat: "Sport",     name: "Ligue des Champions",     where: "Europe",                 when: "Saison 25 – 26",    g: ["#0d1b4d", "#7aa2ff"] },
-    { cat: "Sport",     name: "Ligue 1",                 where: "Paris, Marseille, Lyon…",when: "Saison 25 – 26",    img: "ligue-1.webp" },
-    { cat: "Sport",     name: "Premier League",          where: "Angleterre",             when: "Saison 25 – 26",    img: "premier-league.webp" },
-    { cat: "Spectacle", name: "Circolo Paris",           where: "Paris",                  when: "2026",              g: ["#4a1424", "#f2a07a"] },
-    { cat: "Festival",  name: "Tomorrowland",            where: "Boom, Belgique",         when: "Juillet 2026",      g: ["#13294b", "#c9a0ff"] },
-    { cat: "Festival",  name: "Les Ardentes",            where: "Liège, Belgique",        when: "Juillet 2026",      g: ["#3a1c0f", "#ffb36b"] },
-    { cat: "Festival",  name: "VnB Fest",                where: "France",                 when: "2026",              g: ["#1b3a2f", "#b7f0c8"] }
+    { cat: "Sport",     name: "Ligue des Champions",     where: "Europe",                 when: "Saison 26 – 27",    g: ["#0d1b4d", "#7aa2ff"] },
+    { cat: "Sport",     name: "Ligue 1",                 where: "Paris, Marseille, Lyon…",when: "Saison 26 – 27",    img: "ligue-1.webp" },
+    { cat: "Sport",     name: "Premier League",          where: "Angleterre",             when: "Saison 26 – 27",    img: "premier-league.webp" },
+    { cat: "Spectacle", name: "Circolo Paris",           where: "Paris",                  when: "2026",              g: ["#4a1424", "#f2a07a"] }
   ];
   var TYPE_FOR = { Concert: "t-concert", Sport: "t-sport", Spectacle: "t-spectacle", Festival: "t-festival" };
   function bg(ev) {
@@ -793,6 +783,7 @@ section { position: relative; }
   /* ---------------- marquee ---------------- */
   var mq = $("#marquee");
   var names = EVENTS.map(function (e) { return e.name; });
+  while (names.length < 10) names = names.concat(names);
   var mqHtml = names.map(function (n) { return '<span class="marquee-item">' + esc(n) + "</span>"; }).join("");
   mq.innerHTML = mqHtml + mqHtml;
 
@@ -810,7 +801,9 @@ section { position: relative; }
   }).join("");
 
   // filters
-  var cats = ["Tous", "Concert", "Sport", "Spectacle", "Festival"];
+  var cats = ["Tous", "Concert", "Sport", "Spectacle", "Festival"].filter(function (c) {
+    return c === "Tous" || EVENTS.some(function (e) { return e.cat === c; });
+  });
   var filters = $("#filters");
   filters.innerHTML = cats.map(function (c, i) {
     var n = c === "Tous" ? EVENTS.length : EVENTS.filter(function (e) { return e.cat === c; }).length;
@@ -922,12 +915,10 @@ section { position: relative; }
     });
   }
   var PASS = [
-    { name: "Jul · Vélodrome", place: "Marseille", date: "2026" },
-    { name: "Roland-Garros", place: "Paris", date: "Juin 2026" },
-    { name: "Tomorrowland", place: "Boom", date: "Juil. 2026" },
-    { name: "The Weeknd", place: "Paris", date: "2026" },
-    { name: "Ligue des Champions", place: "Europe", date: "25 – 26" },
-    { name: "Bad Bunny", place: "Paris", date: "2026" }
+    { name: "Ligue des Champions", place: "Europe", date: "26 – 27" },
+    { name: "Circolo Paris", place: "Paris", date: "2026" },
+    { name: "Ligue 1", place: "Paris", date: "26 – 27" },
+    { name: "Premier League", place: "Londres", date: "26 – 27" }
   ];
   var pi = 0;
   if (!reduce) {
