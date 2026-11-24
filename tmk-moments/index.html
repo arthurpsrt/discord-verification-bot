@@ -239,18 +239,10 @@ section { position: relative; }
 .ev-go svg { width: 18px; height: 18px; stroke: currentColor; transition: transform .6s var(--ease); }
 .ev-btn:hover .ev-go { background: var(--glow); color: var(--ink); box-shadow: none; }
 .ev-btn:hover .ev-go svg { transform: rotate(-45deg); }
-.ev-thumb { display: none; }
 .ev.is-out { display: none; }
 .ev-more { margin-top: 48px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; padding: 32px; border-radius: 20px; background: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line); }
 .ev-more p { margin: 0; max-width: 52ch; color: var(--mist); }
 .ev-more strong { display: block; color: var(--pearl); font-family: var(--f-display); text-transform: uppercase; font-size: 30px; line-height: 1; margin-bottom: 8px; font-weight: 800; }
-
-/* floating preview */
-.preview { position: fixed; left: 0; top: 0; z-index: 40; width: 340px; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; pointer-events: none;
-  opacity: 0; transform: translate3d(-50%, -50%, 0) scale(.6); transition: opacity .35s var(--ease), scale .5s var(--ease); box-shadow: 0 30px 60px -20px rgba(0,0,0,.7); }
-.preview.on { opacity: 1; }
-.preview .pv-img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: opacity .35s; }
-.preview .pv-label { position: absolute; left: 14px; bottom: 12px; font-family: var(--f-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--pearl); background: rgba(15,12,18,.7); padding: 6px 10px; border-radius: 999px; }
 
 /* promise */
 .promise-text { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: clamp(40px, 6.2vw, 92px); line-height: .98; margin: 0 0 clamp(64px, 8vw, 110px); max-width: 16ch; text-wrap: balance; }
@@ -382,13 +374,12 @@ section { position: relative; }
   .services { grid-template-columns: minmax(0, 1fr); }
   .service, .service + .service { padding: 30px 0; border-left: 0; }
   .service + .service { border-top: 1px solid var(--line); }
-  .ev-btn { grid-template-columns: 64px minmax(0, 1fr) 40px; gap: 16px; padding: 18px 0; }
+  .ev-btn { grid-template-columns: minmax(0, 1fr) 40px; gap: 16px; padding: 18px 0; }
   .ev-btn::before { inset: 0 -10px; }
-  .ev-thumb { display: block; width: 64px; height: 64px; border-radius: 12px; background-size: cover; background-position: center; grid-row: 1 / span 3; grid-column: 1; }
-  .ev-cat { grid-column: 2; grid-row: 1; font-size: 11px; }
-  .ev-name { grid-column: 2; grid-row: 2; font-size: 30px; }
-  .ev-where { grid-column: 2; grid-row: 3; font-size: 14px; margin-top: -8px; }
-  .ev-go { grid-column: 3; grid-row: 1 / span 3; width: 40px; height: 40px; }
+  .ev-cat { grid-column: 1; grid-row: 1; font-size: 11px; }
+  .ev-name { grid-column: 1; grid-row: 2; font-size: 30px; }
+  .ev-where { grid-column: 1; grid-row: 3; font-size: 14px; margin-top: -8px; }
+  .ev-go { grid-column: 2; grid-row: 1 / span 3; width: 40px; height: 40px; }
   .ev-btn:hover .ev-name { transform: none; }
   .form-grid { grid-template-columns: minmax(0, 1fr); }
   .hero-actions .btn { flex: 1 1 auto; justify-content: center; }
@@ -581,7 +572,6 @@ section { position: relative; }
         <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </div>
   </div>
-  <div class="preview" id="preview" aria-hidden="true"><div class="pv-img" id="pv-img"></div><span class="pv-label" id="pv-label"></span></div>
 </section>
 
 <!-- ============ PROMISE / ABOUT ============ -->
@@ -778,22 +768,17 @@ section { position: relative; }
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 
   /* ---------------- data ---------------- */
-  var IMG = "assets/img/";
   var EVENTS = [
-    { cat: "Sport",   name: "Ligue des Champions",        where: "Europe",                    when: "Saison 26 – 27",   g: ["#0d1b4d", "#7aa2ff"] },
-    { cat: "Sport",   name: "Ligue 1",                    where: "Paris, Marseille, Lyon…",   when: "Saison 26 – 27",   img: "ligue-1.webp" },
-    { cat: "Sport",   name: "Premier League",             where: "Angleterre",                when: "Saison 26 – 27",   img: "premier-league.webp" },
-    { cat: "Sport",   name: "Tournoi des Six Nations",    where: "Stade de France",           when: "Fév. – Mars 2027", g: ["#0b2a5b", "#e8eef9"] },
-    { cat: "Sport",   name: "Ligue des Nations · Bleus",  where: "France · Europe",           when: "Mars – Juin 2027", g: ["#0a1f6b", "#ff5a5f"] },
-    { cat: "Concert", name: "Céline Dion",                where: "Paris La Défense Arena",    when: "Mai 2027",         g: ["#3b1a3f", "#f6d1e0"] },
-    { cat: "Sport",   name: "Roland-Garros",              where: "Paris",                     when: "Mai – Juin 2027",  img: "roland-garros.webp" },
-    { cat: "Sport",   name: "JO Los Angeles 2028",        where: "Los Angeles, États-Unis",   when: "Juillet 2028",     g: ["#1d2d6b", "#ffc46b"] }
+    { cat: "Sport",   name: "Ligue des Champions",        where: "Europe",                    when: "Saison 26 – 27" },
+    { cat: "Sport",   name: "Ligue 1",                    where: "Paris, Marseille, Lyon…",   when: "Saison 26 – 27" },
+    { cat: "Sport",   name: "Premier League",             where: "Angleterre",                when: "Saison 26 – 27" },
+    { cat: "Sport",   name: "Tournoi des Six Nations",    where: "Stade de France",           when: "Fév. – Mars 2027" },
+    { cat: "Sport",   name: "Ligue des Nations · Bleus",  where: "France · Europe",           when: "Mars – Juin 2027" },
+    { cat: "Concert", name: "Céline Dion",                where: "Paris La Défense Arena",    when: "Mai 2027" },
+    { cat: "Sport",   name: "Roland-Garros",              where: "Paris",                     when: "Mai – Juin 2027" },
+    { cat: "Sport",   name: "JO Los Angeles 2028",        where: "Los Angeles, États-Unis",   when: "Juillet 2028" }
   ];
   var TYPE_FOR = { Concert: "t-concert", Sport: "t-sport", Spectacle: "t-spectacle", Festival: "t-festival" };
-  function bg(ev) {
-    return ev.img ? "url('" + IMG + ev.img + "')"
-      : "radial-gradient(120% 90% at 80% 10%, " + ev.g[1] + " 0%, transparent 55%), linear-gradient(135deg, " + ev.g[0] + ", #0f0c12)";
-  }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
   /* ---------------- marquee ---------------- */
@@ -808,7 +793,6 @@ section { position: relative; }
   var arrow = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
   list.innerHTML = EVENTS.map(function (e, i) {
     return '<li class="ev" data-cat="' + e.cat + '"><button type="button" class="ev-btn" data-i="' + i + '" aria-label="Demander ' + esc(e.name) + '">' +
-      '<span class="ev-thumb" style="background-image:' + bg(e).replace(/"/g, "&quot;") + '"></span>' +
       '<span class="ev-cat">' + e.cat + "</span>" +
       '<span class="ev-name">' + esc(e.name) + "</span>" +
       '<span class="ev-where">' + esc(e.where) + "</span>" +
@@ -857,32 +841,6 @@ section { position: relative; }
     prefill(EVENTS[+b.dataset.i]);
   });
   $$("[data-prefill]").forEach(function (a) { a.addEventListener("click", function (ev) { ev.preventDefault(); $("#eventName").value = ""; prefill(null); }); });
-
-  // floating preview following cursor
-  var pv = $("#preview"), pvImg = $("#pv-img"), pvLabel = $("#pv-label");
-  if (finePointer && !reduce) {
-    var mx = 0, my = 0, px = 0, py = 0, active = false, raf = null;
-    var loop = function () {
-      px += (mx - px) * .14; py += (my - py) * .14;
-      var rot = Math.max(-10, Math.min(10, (mx - px) * .06));
-      pv.style.transform = "translate3d(" + (px + 28) + "px," + (py - 120) + "px,0) rotate(" + rot + "deg) scale(" + (active ? 1 : .6) + ")";
-      raf = requestAnimationFrame(loop);
-    };
-    list.addEventListener("pointermove", function (e) { mx = e.clientX; my = e.clientY; });
-    list.addEventListener("pointerover", function (e) {
-      var b = e.target.closest(".ev-btn"); if (!b) return;
-      var ev = EVENTS[+b.dataset.i];
-      pvImg.style.backgroundImage = bg(ev);
-      pvLabel.textContent = ev.where + " · " + ev.when;
-      if (!active) { px = mx = e.clientX; py = my = e.clientY; }
-      active = true; pv.classList.add("on");
-      if (!raf) loop();
-    });
-    list.addEventListener("pointerleave", function () {
-      active = false; pv.classList.remove("on");
-      setTimeout(function () { if (!active && raf) { cancelAnimationFrame(raf); raf = null; } }, 400);
-    });
-  }
 
   /* ---------------- header ---------------- */
   var head = $("#top-bar"), lastY = 0, sticky = $("#sticky-cta");
