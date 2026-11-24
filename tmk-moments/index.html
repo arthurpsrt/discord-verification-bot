@@ -254,17 +254,13 @@ section { position: relative; }
 .ev-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
 .ev { border-bottom: 1px solid var(--line); }
 .ev-btn { width: 100%; background: none; border: 0; cursor: pointer; text-align: left; padding: 26px 0; display: grid; align-items: center; gap: 24px;
-  grid-template-columns: 200px minmax(0, 1fr) 220px 150px 48px; position: relative; isolation: isolate; }
+  grid-template-columns: 120px minmax(0, 1fr) 220px 160px 48px; position: relative; isolation: isolate; }
 .ev-btn::before { content: ""; position: absolute; inset: 0 -18px; z-index: -1; background: var(--ink-2); border-radius: 14px; transform: scaleY(.6); opacity: 0; transition: transform .5s var(--ease), opacity .4s; }
 .ev-btn:hover::before, .ev-btn:focus-visible::before { transform: scaleY(1); opacity: 1; }
 .ev-cat { font-family: var(--f-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--glow); }
 .ev-name { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: clamp(32px, 3.6vw, 52px); line-height: .95; transition: transform .6s var(--ease); min-width: 0; overflow-wrap: anywhere; }
 .ev-btn:hover .ev-name { transform: translateX(14px); }
 .ev-where, .ev-when { color: var(--mist); font-size: 15px; }
-.ev-count { font-style: normal; display: inline-block; margin-left: 8px; padding: 3px 8px; border-radius: 999px; font-size: 10.5px; letter-spacing: .08em; color: var(--pearl); box-shadow: inset 0 0 0 1px var(--line-strong); vertical-align: 1px; white-space: nowrap; }
-.ev-count.hot { color: var(--ink); background: var(--glow); box-shadow: none; }
-.ev-count.hot::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--ink); margin-right: 6px; vertical-align: 1px; animation: blink 1.6s ease-in-out infinite; }
-@keyframes blink { 50% { opacity: .25; } }
 .ev-when-m { display: none; }
 .ev-when { font-family: var(--f-mono); font-size: 13px; letter-spacing: .04em; }
 .ev-go { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 1px var(--line-strong); transition: background .4s, transform .6s var(--ease); justify-self: end; }
@@ -438,7 +434,7 @@ section { position: relative; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 1080px) {
-  .ev-btn { grid-template-columns: 180px minmax(0, 1fr) 220px 48px; }
+  .ev-btn { grid-template-columns: 100px minmax(0, 1fr) 200px 48px; }
   .ev-when { display: none; }
   .ev-when-m { display: inline; }
   .services { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -923,29 +919,16 @@ section { position: relative; }
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 
   /* ---------------- data ---------------- */
-  // start: first date of the event (YYYY-MM-DD); live: season already running
   var EVENTS = [
-    { cat: "Sport",   name: "Ligue des Champions",        where: "Europe",                    when: "Saison 26 – 27",   live: true },
-    { cat: "Sport",   name: "Ligue 1",                    where: "Paris, Marseille, Lyon…",   when: "Saison 26 – 27",   live: true },
-    { cat: "Sport",   name: "Premier League",             where: "Angleterre",                when: "Saison 26 – 27",   live: true },
-    { cat: "Sport",   name: "Tournoi des Six Nations",    where: "Stade de France",           when: "Fév. – Mars 2027", start: "2027-02-06" },
-    { cat: "Sport",   name: "Ligue des Nations · Bleus",  where: "France · Europe",           when: "Mars – Juin 2027", start: "2027-03-25" },
-    { cat: "Concert", name: "Céline Dion",                where: "Paris La Défense Arena",    when: "Mai 2027",         start: "2027-05-08" },
-    { cat: "Sport",   name: "Roland-Garros",              where: "Paris",                     when: "Mai – Juin 2027",  start: "2027-05-23" },
-    { cat: "Sport",   name: "JO Los Angeles 2028",        where: "Los Angeles, États-Unis",   when: "Juillet 2028",     start: "2028-07-14" }
+    { cat: "Sport",   name: "Ligue des Champions",        where: "Europe",                    when: "Saison 26 – 27" },
+    { cat: "Sport",   name: "Ligue 1",                    where: "Paris, Marseille, Lyon…",   when: "Saison 26 – 27" },
+    { cat: "Sport",   name: "Premier League",             where: "Angleterre",                when: "Saison 26 – 27" },
+    { cat: "Sport",   name: "Tournoi des Six Nations",    where: "Stade de France",           when: "Fév. – Mars 2027" },
+    { cat: "Sport",   name: "Ligue des Nations · Bleus",  where: "France · Europe",           when: "Mars – Juin 2027" },
+    { cat: "Concert", name: "Céline Dion",                where: "Paris La Défense Arena",    when: "Mai 2027" },
+    { cat: "Sport",   name: "Roland-Garros",              where: "Paris",                     when: "Mai – Juin 2027" },
+    { cat: "Sport",   name: "JO Los Angeles 2028",        where: "Los Angeles, États-Unis",   when: "Juillet 2028" }
   ];
-  function countdown(e) {
-    if (e.live) return { txt: "En cours", hot: true };
-    if (!e.start) return null;
-    var p = e.start.split("-"), d = new Date(+p[0], +p[1] - 1, +p[2]);
-    var now = new Date(); now.setHours(0, 0, 0, 0);
-    var days = Math.round((d - now) / 864e5);
-    if (days < 0) return { txt: "En cours", hot: true };
-    if (days === 0) return { txt: "Aujourd'hui", hot: true };
-    if (days <= 90) return { txt: "J-" + days, hot: days <= 30 };
-    var m = Math.round(days / 30.4);
-    return { txt: "Dans " + m + " mois" };
-  }
   var TYPE_FOR = { Concert: "t-concert", Sport: "t-sport", Spectacle: "t-spectacle", Festival: "t-festival" };
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
@@ -960,9 +943,8 @@ section { position: relative; }
   var list = $("#ev-list");
   var arrow = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
   list.innerHTML = EVENTS.map(function (e, i) {
-    var cd = countdown(e);
     return '<li class="ev" data-cat="' + e.cat + '"><button type="button" class="ev-btn" data-i="' + i + '" aria-label="Demander ' + esc(e.name) + '">' +
-      '<span class="ev-cat">' + e.cat + (cd ? ' <em class="ev-count' + (cd.hot ? " hot" : "") + '">' + cd.txt + "</em>" : "") + "</span>" +
+      '<span class="ev-cat">' + e.cat + "</span>" +
       '<span class="ev-name">' + esc(e.name) + "</span>" +
       '<span class="ev-where">' + esc(e.where) + '<span class="ev-when-m"> · ' + esc(e.when) + "</span></span>" +
       '<span class="ev-when">' + esc(e.when) + "</span>" +
